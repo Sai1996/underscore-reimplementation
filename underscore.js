@@ -5,3 +5,19 @@ var _ = function(obj) {
 };
 
 window._ = _;
+
+_.findIndex = function(array,predicate){
+  var found = -1;
+  if (typeof predicate == "function")
+  {
+    for (var i = 0; i < array.length; i++)
+  {
+    if (predicate(array[i]))
+    {
+      found = i;
+      break;
+    }
+  }
+  }
+  return found;
+}
