@@ -174,7 +174,7 @@
     sum = _.reduce([1, 2, 3], function(memo, num){ return memo + num * this.multiplier; }, 0, context);
     assert.strictEqual(sum, 18, 'can reduce with a context object');
 
-    sum = _([1, 2, 3]).reduce(function(memo, num){ return memo + num; }, 0);
+    sum = _.reduce([1, 2, 3],function(memo, num){ return memo + num; }, 0);
     assert.strictEqual(sum, 6, 'OO-style reduce');
 
     sum = _.reduce([1, 2, 3], function(memo, num){ return memo + num; });
