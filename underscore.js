@@ -30,6 +30,30 @@ _.reduceRight = function(list,iteratee,memo,context){
   return result;
 }
 
+_.invoke = function(list,methodName,arg){
+  var arr = Array.prototype.slice.call(arguments);
+  arr.splice(0,2);
+  for (var i = 0; i < list.length; i++){
+    if (list[i][methodName] === null ){
+      list[i] = null;
+    }
+    else if(list[i][methodName] === undefined){
+      list[i] = undefined;
+    }
+    else{
+      list[i] = list[i][methodName].apply(list[i],arr);
+    }
+    
+  }
+  return list;
+}
+
+_.constant = function(value){
+  return function(){
+    return value;
+  };
+}
+
 _.findIndex = function(array,predicate,context){
   var found = -1;
   if (typeof predicate == "function")
@@ -59,6 +83,8 @@ _.findLastIndex = function(array,predicate,context){
       }
     }
   }
+
+
   return found;
 }
 
