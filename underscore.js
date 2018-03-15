@@ -50,6 +50,61 @@ _.constant = function (value) {
   };
 }
 
+_.isArray = function (object) {
+  if (typeof object == "object" && Object.prototype.toString.call(object) === "[object Array]") {
+    return true;
+  }
+  return false;
+}
+
+_.isString = function (object) {
+  if (Object.prototype.toString.call(object) === "[object String]") {
+    return true;
+  }
+  return false;
+}
+
+_.isNumber = function (object) {
+  if (Object.prototype.toString.call(object) === "[object Number]") {
+    return true;
+  }
+  return false;
+}
+
+_.isBoolean = function (object) {
+  if (Object.prototype.toString.call(object) === "[object Boolean]") {
+    return true;
+  }
+  return false;
+}
+
+_.isNull = function (object) {
+  if (Object.prototype.toString.call(object) === "[object Null]") {
+    return true;
+  }
+  return false;
+}
+
+_.isUndefined = function (object) {
+  if (Object.prototype.toString.call(object) === "[object Undefined]") {
+    return true;
+  }
+  return false;
+}
+
+_.isNaN = function (object) {
+  if ((typeof object == "number" || typeof object == "object") && isNaN(object)) {
+    return true;
+  }
+  return false;
+}
+
+_.isRegExp = function (object) {
+  if (Object.prototype.toString.call(object) === "[object RegExp]") {
+    return true;
+  }
+  return false;
+}
 _.isEqual = function (object, other) {
   var testIsNaN = function (a, b) {
     if (typeof a == "number" && typeof b == "number" && isNaN(a) && isNaN(b)) {
@@ -74,7 +129,7 @@ _.isEqual = function (object, other) {
         return false;
       }
       if (testIsNaN(a, b)) {
-        if(object instanceof Number){
+        if (object instanceof Number) {
           return true;
         }
         return false;
