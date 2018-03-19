@@ -57,6 +57,19 @@ _.isEqual = function (object, other) {
     }
     return false;
   }
+  if (object instanceof Array && other instanceof Array){
+    if (object.length == other.length){
+      var same = true;
+      for (var i = 0; i < object.length; i++){
+        if (!_.isEqual(object[i],other[i])){
+          same = false;
+          break;
+        }
+      }
+      return same;
+    }
+    return false;
+  }
   if (object === other) {
     if ((1 / object === -Infinity && 1 / other !== -Infinity) || (1 / object !== -Infinity && 1 / other === -Infinity)) {
       return false;
@@ -87,6 +100,10 @@ _.isEqual = function (object, other) {
         }
       }
     }
+
+    if (String(object) === String(other)){
+      return true;
+    }
     return false;
   }
 }
@@ -113,7 +130,9 @@ _.findLastIndex = function (array, predicate, context) {
       }
     }
   }
-
-
   return found;
+}
+
+_.isElement = function(object){
+  return object instanceof Element;
 }
