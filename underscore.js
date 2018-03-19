@@ -86,10 +86,7 @@ _.isNull = function (object) {
 }
 
 _.isUndefined = function (object) {
-  if (Object.prototype.toString.call(object) === "[object Undefined]") {
-    return true;
-  }
-  return false;
+ return Object.prototype.toString.call(object) === "[object Undefined]";
 }
 
 _.isNaN = function (object) {
@@ -100,10 +97,38 @@ _.isNaN = function (object) {
 }
 
 _.isRegExp = function (object) {
-  if (Object.prototype.toString.call(object) === "[object RegExp]") {
-    return true;
+  return Object.prototype.toString.call(object) === "[object RegExp]";
+}
+
+_.isDate = function (object) {
+  return Object.prototype.toString.call(object) === "[object Date]";
+}
+
+_.isFunction = function (object) {
+  return Object.prototype.toString.call(object) === "[object Function]";
+}
+
+_.isError = function (object) {
+  return Object.prototype.toString.call(object) === "[object Error]";
+}
+
+_.isFinite = function(object) {
+  if(Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)){
+      return true;
   }
-  return false;
+  else if(Object.prototype.toString.call(object) === "[object Null]" || object === ""){
+    return false;
+  }
+  else if(Object.prototype.toString.call(object) === "[object String]"){
+    object = Number(object);
+    if(Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)){
+      return true;
+    }
+    return false;
+  }
+  else{
+    return false;
+  }
 }
 _.isEqual = function (object, other) {
   var testIsNaN = function (a, b) {
@@ -189,5 +214,5 @@ _.findLastIndex = function (array, predicate, context) {
 }
 
 _.isElement = function(object){
-  return object instanceof Element;
+  return object instanceof Element || Object.prototype.toString.call(object) === "[object HTMLDivElement]";
 }
