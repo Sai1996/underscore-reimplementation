@@ -112,6 +112,22 @@ _.isError = function (object) {
   return Object.prototype.toString.call(object) === "[object Error]";
 }
 
+_.isObject = function (object) {
+  if((typeof object === "object" || typeof object === "function") && object != null){
+      return true;
+  }
+  return false;
+}
+
+_.isEmpty = function (object) {
+  if(Object.prototype.toString.call(object) === "[object String]" || Object.prototype.toString.call(object) === "[object Array]"){
+    return object.length === 0;
+  }
+  else{
+    
+  }
+}
+
 _.isFinite = function(object) {
   if(Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)){
       return true;
