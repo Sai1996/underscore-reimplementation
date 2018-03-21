@@ -47,7 +47,7 @@
   });
 
   QUnit.test('isEmpty', function(assert) {
-    assert.notOk(_([iNumber]).isEmpty(), '[1] is not empty');
+    assert.notOk(_.isEmpty([iNumber]), '[1] is not empty');
     assert.notOk(_.isEmpty(iArray), '[] is empty');
     assert.ok(_.isEmpty(iObject), '{} is empty');
   });

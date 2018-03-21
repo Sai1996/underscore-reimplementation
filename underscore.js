@@ -124,10 +124,35 @@ _.isEmpty = function (object) {
     return object.length === 0;
   }
   else{
-    
+    var hasNoProp = true;
+    for(const prop in object){
+      if(object.hasOwnProperty(prop)){
+        hasNoProp = false;
+      }
+    }
+    return hasNoProp;
   }
 }
 
+_.isMatch = function (object,properties) {
+  var isProp = true;
+  if(_.isEmpty(object) && _.isEmpty(properties)){
+    return isProp;
+  }
+  if(Object.prototype.toString.call(object) === "[object Object]"){
+    for(const prop in properties){
+      if (object[prop] !== properties[prop]){
+        isProp = false;
+      }
+    }
+    return isProp;
+  }
+  return false;
+ 
+}
+_.isArguments = function (object) {
+  return Object.prototype.toString.call(object) === "[object Arguments]";
+}
 _.isFinite = function(object) {
   if(Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)){
       return true;
@@ -146,6 +171,7 @@ _.isFinite = function(object) {
     return false;
   }
 }
+
 _.isEqual = function (object, other) {
   var testIsNaN = function (a, b) {
     if (typeof a == "number" && typeof b == "number" && isNaN(a) && isNaN(b)) {
@@ -232,3 +258,23 @@ _.findLastIndex = function (array, predicate, context) {
 _.isElement = function(object){
   return object instanceof Element || Object.prototype.toString.call(object) === "[object HTMLDivElement]";
 }
+
+_.each = function (list, iteratee, context) {
+  if(typeof iteratee == "function"){
+    if(Object.prototype.toString.call(list) === "[object Object]"){
+      for(const prop in list){
+        if(list.hasOwnProperty(prop)){
+          iteratee.call(context,list[prop],prop,list);
+        }
+        
+      }
+    }
+    else{
+      for (var i = 0; i < list.length; i++){
+        iteratee.call(context,list[i],i,list);
+      }
+    }  
+  }
+}
+
+_.forEach = _.each;
