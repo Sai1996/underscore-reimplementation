@@ -136,13 +136,27 @@ _.isEmpty = function (object) {
 
 _.isMatch = function (object,properties) {
   var isProp = true;
-  if(_.isEmpty(object) && _.isEmpty(properties)){
+  
+  if(_.isEmpty(properties) || _.isNull(properties)){
     return isProp;
   }
+  
   if(Object.prototype.toString.call(object) === "[object Object]"){
     for(const prop in properties){
+
       if (object[prop] !== properties[prop]){
         isProp = false;
+      }
+      else if (!object.hasOwnProperty(prop)){
+        if(properties[prop] === undefined){
+          isProp = false;
+        }
+        else{
+          var pto = object.constructor.prototype;
+          if(!pto.hasOwnProperty(prop) || pto[prop] !== properties[prop]){
+            isProp = false;
+          }
+        }
       }
     }
     return isProp;
@@ -266,15 +280,62 @@ _.each = function (list, iteratee, context) {
         if(list.hasOwnProperty(prop)){
           iteratee.call(context,list[prop],prop,list);
         }
-        
       }
     }
     else{
-      for (var i = 0; i < list.length; i++){
-        iteratee.call(context,list[i],i,list);
+      if(list !== null){
+        for (var i = 0; i < list.length; i++){
+          iteratee.call(context,list[i],i,list);
+        }
       }
     }  
   }
+  return list;
 }
 
 _.forEach = _.each;
+
+_.contains = function(list, value, fromIndex) {
+  if(Object.prototype.toString.call(list) === "[object Array]"){
+    return list.indexOf(value,fromIndex) !== -1;
+  }
+  else{
+    return list.indexOf(value) !== -1;
+  }
+}
+
+_.includes = _.contains;
+_.include = _.contains;
+
+_.partial = function(func, arguments) {
+  if (arguments[0] === "_"){
+
+  }
+  else{
+    return func.call(arguments,func.arguments);
+  }
+}
+
+_.toArray = function (list) {
+  return Array.from(list);
+}
+
+_.map = function (list, iteratee, context) {
+  var output = [];
+  if(Object.prototype.toString.call(list) === "[object Object]"){
+    for(const prop in list){
+      if(iteratee.call(context, list[prop], prop, list) !== undefined){
+        output.push(iteratee.call(context, list[prop], prop, list));
+      }
+     
+    }
+  }
+  else if(Object.prototype.toString.call(list) === "[object String]" || Object.prototype.toString.call(list) === "[object Array]")
+  for(var i = 0; i < list.length; i++){
+    if(iteratee.call(context, list[i], i, list) !== undefined){
+      output.push(iteratee.call(context, list[i], i, list));
+    }
+    
+  }
+  return output;
+}
