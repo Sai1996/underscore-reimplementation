@@ -307,17 +307,42 @@ _.contains = function(list, value, fromIndex) {
 _.includes = _.contains;
 _.include = _.contains;
 
-_.partial = function(func, arguments) {
-  if (arguments[0] === "_"){
-
+_.partial = function(func) {
+  var args = _.toArray(arguments).slice(1);
+  
+  function newFunc(){
+    var newArg = [];
+    var thisArgs = _.toArray(arguments);
+    var cur = 0;
+    for(var i = 0; i < args.length; i++){
+      if(args[i] === _){
+        newArg.push(thisArgs[cur]);
+        cur++;
+      }
+      else{
+        newArg.push(args[i]);
+      }
+    }
+    for(var i = cur; i < thisArgs.length; i++){
+      newArg.push(thisArgs[i]);
+    }
+    return func.apply(this, newArg);
   }
-  else{
-    return func.call(arguments,func.arguments);
-  }
+  return newFunc;
 }
 
 _.toArray = function (list) {
-  return Array.from(list);
+  var output = [];
+  if(Object.prototype.toString.call(list) === "[object Object]"){
+    for(const prop in list){
+      output.push(list[prop]);
+    }
+    return output;
+  }
+  else{
+    return Array.prototype.slice.call(list);
+  }
+  
 }
 
 _.map = function (list, iteratee, context) {
@@ -327,15 +352,16 @@ _.map = function (list, iteratee, context) {
       if(iteratee.call(context, list[prop], prop, list) !== undefined){
         output.push(iteratee.call(context, list[prop], prop, list));
       }
-     
     }
   }
   else if(Object.prototype.toString.call(list) === "[object String]" || Object.prototype.toString.call(list) === "[object Array]")
   for(var i = 0; i < list.length; i++){
-    if(iteratee.call(context, list[i], i, list) !== undefined){
+    if(Object.prototype.toString.call(iteratee) === "[object Function]" && iteratee.call(context, list[i], i, list) !== undefined){
       output.push(iteratee.call(context, list[i], i, list));
     }
-    
+    else{
+      output.push(list[i][iteratee]);
+    }
   }
   return output;
 }
