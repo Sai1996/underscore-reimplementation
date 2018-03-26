@@ -307,15 +307,16 @@ _.contains = function(list, value, fromIndex) {
 _.includes = _.contains;
 _.include = _.contains;
 
+
 _.partial = function(func) {
   var args = _.toArray(arguments).slice(1);
-  
+ 
   function newFunc(){
     var newArg = [];
     var thisArgs = _.toArray(arguments);
     var cur = 0;
     for(var i = 0; i < args.length; i++){
-      if(args[i] === _){
+      if(args[i] === _.partial.placeholder){
         newArg.push(thisArgs[cur]);
         cur++;
       }
@@ -328,8 +329,10 @@ _.partial = function(func) {
     }
     return func.apply(this, newArg);
   }
+  newFunc.prototype = Object.create(func.prototype);
   return newFunc;
 }
+_.partial.placeholder = _;
 
 _.toArray = function (list) {
   var output = [];
@@ -364,4 +367,15 @@ _.map = function (list, iteratee, context) {
     }
   }
   return output;
+}
+
+_.initial = function (array, n){
+  var args = Array.prototype.slice.call(arguments);
+  if(args.length == 1){
+    n = 1;
+  }
+  if(n > array.length){
+    return [];
+  }
+  return Array.prototype.slice.call(array, 0,array.length - n);
 }
