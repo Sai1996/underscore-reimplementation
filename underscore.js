@@ -379,3 +379,101 @@ _.initial = function (array, n){
   }
   return Array.prototype.slice.call(array, 0,array.length - n);
 }
+
+var arraySum = [];
+_.flatten = function (array,shallow) {
+  if(arguments.length === 1){
+    for(var i = 0; i < array.length; i++){
+
+    }
+  }
+  else{
+
+  }
+}
+
+_.without = function (array,values) {
+  var args = _.toArray(arguments).slice(1);
+  var output = [];
+  for(var i = 0; i < array.length; i++){
+    if( args.indexOf(array[i]) === -1){
+      output.push(array[i]);
+    }
+  }
+  return output;
+}
+
+_.union = function (arrays) {
+  var args = _.toArray(arguments)
+  var curArg = [];
+  for(var i = 0; i < args.length; i++){
+    for(var j = 0; j < args[i].length; j++){
+      curArg.push(args[i][j]);
+    }
+  }
+  var output = [];
+  for(var i = 0; i < curArg.length; i++){
+    if(output.indexOf(curArg[i]) === -1){
+      output.push(curArg[i]);
+    }
+  }
+  return output;
+}
+
+_.intersection = function (arrays) {
+  var args = _.toArray(arguments);
+  var output = [];
+  for(var i = 0; i < args.length; i++){
+    if(_.isNull(args[i])){
+      return output;
+    }
+    args[i] = _.toArray(args[i]);
+    
+  }
+  var lastInterSec = args[0]
+  for(var i = 0; i < args.length - 1; i++){
+      lastInterSec = lastInterSec.filter(function (e) {
+        return args[i + 1].indexOf(e) !== -1;
+      });
+  }
+  output = lastInterSec.filter(function (element, index) {
+    return lastInterSec.indexOf(element) === index;
+  });
+  return output;
+}
+
+_.difference = function (array, others){
+  if(!_.isArray(array)){
+    array = _.toArray(array);
+  }
+  var other = _.toArray(arguments).slice(1);
+  var uni = _.union.apply(null,other);
+  var output = [];
+  output = array.filter(function(e){
+      return uni.indexOf(e) === -1;
+  });
+  return output;
+}
+
+_.uniq = function (array,isSorted,iteratee){
+  if(!_.isArray(array)){
+    array = _.toArray(array);
+  }
+  var output = [];
+  if(isSorted){
+    output = array.filter(function(e,i){
+      return array.indexOf(e) === i;
+    })
+  }
+  else{
+    for(var i = 0; i < array.length; i++){
+      if(output.indexOf(array[i]) === -1){
+        if(isFunction(iteratee)){
+          
+        }
+        output.push(array[i]);
+      }
+    }
+  }
+  return output;
+}
