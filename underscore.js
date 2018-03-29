@@ -456,24 +456,56 @@ _.difference = function (array, others){
 }
 
 _.uniq = function (array,isSorted,iteratee){
+  if(_.isNull(array) || _.isUndefined(array))
+  {
+    return [];
+  }
   if(!_.isArray(array)){
     array = _.toArray(array);
   }
+ 
   var output = [];
+  var temp = [];
+  
+  if(arguments.length === 2 && !_.isBoolean(isSorted)){
+    iteratee = arguments[1];
+  } 
+  if(_.isFunction(iteratee)){
+    for(var i = 0; i < array.length; i++){
+      temp[i] =  iteratee(array[i]);
+    }
+    temp = temp.filter(function(e,i){
+      if(temp.indexOf(e) === i){
+        output.push(array[i]);
+      }
+      return temp.indexOf(e) === i;
+    });
+    return output;
+   }
+   else if(_.isString(iteratee) || _.isNumber(iteratee)){
+     var record = [];
+     temp = array;
+    for(var i = 0; i < temp.length; i++){
+      if(record.indexOf(temp[i][iteratee]) === -1){
+        output.push(temp[i]);
+        record.push(temp[i][iteratee]);
+      }
+    }
+    return output;
+   }
   if(isSorted){
     output = array.filter(function(e,i){
       return array.indexOf(e) === i;
     })
   }
   else{
-    for(var i = 0; i < array.length; i++){
-      if(output.indexOf(array[i]) === -1){
-        if(isFunction(iteratee)){
-          
+      for(var i = 0; i < array.length; i++){
+        if(output.indexOf(array[i]) === -1){
+            output.push(array[i]);
         }
-        output.push(array[i]);
       }
-    }
   }
   return output;
 }
+
+_.unique = _.uniq;
