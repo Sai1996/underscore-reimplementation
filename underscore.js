@@ -509,3 +509,59 @@ _.uniq = function (array,isSorted,iteratee){
 }
 
 _.unique = _.uniq;
+
+_.clone = function (object){
+  var output;
+  if(_.isObject(object) && !_.isNull(object) && !_.isUndefined(object)){
+    output = Object.assign({},object);
+  }
+  else if(_.isUndefined(object)){
+    output = undefined;
+  }
+  else if(_.isNull(object)){
+    output = null;
+  }
+  else{
+    output = object;
+  }
+  return output;
+}
+
+_.last = function (array,n){
+  if(_.isNull(array) ){
+    return void 0;
+  }
+  else if(_.isEmpty(array)){
+    return undefined;
+  }
+  if(arguments.length === 1){
+    return array[array.length - 1];
+  }
+  else if(arguments.length > 2){
+    return _.last(array);
+  }
+  else{
+    if(n > array.length){
+      return array;
+    }
+    return array.slice(array.length - n);
+  }
+}
+
+_.lastIndexOf = function (array,value,fromIndex) {
+  var pos = -1;
+  if(_.isNull(array) ){
+    return pos;
+  }
+  if(_.isUndefined(fromIndex)){
+    fromIndex = array.length - 1;
+  }
+ 
+  for(var i = fromIndex; i >= 0; i--){
+    if(array[i] === value){
+      pos = i;
+      break;
+    }
+  }
+ return pos;
+}
