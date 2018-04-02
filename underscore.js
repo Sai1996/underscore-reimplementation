@@ -531,37 +531,37 @@ _.lastIndexOf = function (array, value, fromIndex) {
   if (_.isNull(array) || _.isUndefined(array)) {
     return pos;
   }
-  if(_.isNaN(fromIndex)){
+  if (_.isNaN(fromIndex)) {
     return pos;
   }
   if (_.isUndefined(fromIndex) || !_.isFinite(fromIndex) || fromIndex >= array.length || !_.isNumber(fromIndex)) {
-    if(fromIndex === -Infinity){
+    if (fromIndex === -Infinity) {
       return pos;
     }
     fromIndex = array.length - 1;
   }
- 
-  if(fromIndex < 0){
+
+  if (fromIndex < 0) {
     fromIndex += array.length;
   }
-    for (var i = fromIndex; i >= 0; i--) {
-      if (array[i] === value || (_.isNaN(array[i]) && _.isNaN(value))) {
-        pos = i;
-        break;
-      }
+  for (var i = fromIndex; i >= 0; i--) {
+    if (array[i] === value || (_.isNaN(array[i]) && _.isNaN(value))) {
+      pos = i;
+      break;
     }
-  
+  }
+
   return pos;
 }
 _.indexOf = function (array, value, isSorted) {
-  if(_.isNull(array) || _.isBoolean(array) || _.isUndefined(array)){
+  if (_.isNull(array) || _.isBoolean(array) || _.isUndefined(array)) {
     return -1;
   }
   var arr = _.toArray(array);
   var pos = -1;
-  if(_.isArray(arr)){
-    for(var i = (_.isUndefined(isSorted) ? 0 : Number(isSorted)); i < arr.length; i++){
-      if(arr[i] === value || (_.isNaN(arr[i]) && _.isNaN(value))){
+  if (_.isArray(arr)) {
+    for (var i = (_.isUndefined(isSorted) ? 0 : Number(isSorted)); i < arr.length; i++) {
+      if (arr[i] === value || (_.isNaN(arr[i]) && _.isNaN(value))) {
         pos = i;
         break;
       }
@@ -570,13 +570,9 @@ _.indexOf = function (array, value, isSorted) {
   return pos;
 }
 
-_.every = function (list, predicate, context){
-  var result = true;
-  for(var i = 0; i < list.length; i++){
-    if( !_.isUndefined(predicate) && !predicate.call(context,list[i])){
-      result = false;
-      break;
-    }
-  }
-  return result;
+_.every = function (list, predicate, context) {
+return true;
+}
+_.identity = function (value) {
+  return value;
 }
