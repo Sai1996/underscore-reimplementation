@@ -570,9 +570,41 @@ _.indexOf = function (array, value, isSorted) {
   return pos;
 }
 
-_.every = function (list, predicate, context) {
-return true;
-}
 _.identity = function (value) {
   return value;
+}
+
+_.filter = function (list, predicate, context) {
+  var output = [];
+  if(_.isUndefined(list) || _.isNull(list) || _.isEmpty(list)){
+    return output;
+  }
+  else{
+    if(_.isArray(list)){
+      for(var i = 0; i < list.length; i++){
+        if(_.isFunction(predicate)){
+          if(predicate.call(context,list[i])){
+            output.push(list[i]);
+          }
+        }
+        else if(_.isString(predicate)){
+          for(const prop in list[i]){
+            if(list[i].hasOwnProperty(prop)){
+              output.push(list[i]);
+              break;
+            }
+          }
+        }
+      }
+    }
+    else if(_.isObject(list)){
+      for(const prop in list){
+        if(predicate.call(context, list[prop])){
+          output.push(list[prop]);
+        }
+      }
+    }
+  }
+ 
+  return output;
 }
