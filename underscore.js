@@ -570,9 +570,48 @@ _.indexOf = function (array, value, isSorted) {
   return pos;
 }
 
-_.every = function (list, predicate, context) {
-return true;
-}
 _.identity = function (value) {
   return value;
 }
+
+_.some = function (list, predicate, context) {
+  list = _.toArray(list);
+  var output = false;
+  for(var i = 0; i < list.length; i++){
+    if(_.isFunction(predicate)){
+      if(predicate.call(context,list[i])){
+        output = true;
+        break;
+      }
+    }
+    else if(_.isUndefined(predicate) || _.isNull(predicate)){
+      if(list[i]){
+        output = true;
+        break;   
+      }
+    }
+    else if( _.isObject(predicate)){
+      for(const prop in predicate){
+        if(list[i].hasOwnProperty(prop) && predicate[prop] === list[i][prop]){
+          output = true;
+          break;
+        } 
+        else{
+          output = false;
+          break;
+        }
+      }
+    }
+    else if(_.isString(predicate)){
+      for(const prop in list[i]){
+        if(prop === predicate){
+          output = true;
+          break;
+        }
+      }
+    }
+  }
+  return output;
+}
+
+_.any = _.some;
