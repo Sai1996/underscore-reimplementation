@@ -675,3 +675,18 @@ _.where = function (list, properties){
   }
   return output;
 }
+
+_.findWhere = function (list, properties){
+  for(var i = 0; i < list.length; i++){
+    var fit = true;
+    for(const prop in properties){
+      if(!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]){
+        fit = false;
+        
+      }
+    }
+    if(fit){
+      return list[i];
+    }
+  }
+}
