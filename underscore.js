@@ -625,12 +625,11 @@ _.filter = function (list, predicate, context) {
             output.push(list[i]);
           }
         } else if (_.isString(predicate)) {
-          for (const prop in list[i]) {
-            if (list[i].hasOwnProperty(prop)) {
+          
+            if (list[i].hasOwnProperty(predicate)) {
               output.push(list[i]);
               break;
             }
-          }
         }
         else if(_.isObject(predicate)){
           if(_.isEmpty(predicate)){
@@ -667,7 +666,6 @@ _.where = function (list, properties){
         fit = false;
         break;
       }
-      
     }
     if(fit){
       output.push(list[i]);
@@ -689,4 +687,19 @@ _.findWhere = function (list, properties){
       return list[i];
     }
   }
+}
+
+_.reject = function (list, predicate, context){
+  var passed = _.filter(list, predicate, context);
+  var output = [];
+  for(var i = 0; i < list.length; i++){
+    if(passed.indexOf(list[i]) === -1){
+      output.push(list[i]);
+    }
+  }
+  return output;
+}
+
+_.every = function (list, predicate, context){
+
 }
