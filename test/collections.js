@@ -310,7 +310,7 @@
     assert.deepEqual(_.filter(list, {a: 1}), [{a: 1, b: 2}, {a: 1, b: 3}, {a: 1, b: 4}]);
     assert.deepEqual(_.filter(list, {b: 2}), [{a: 1, b: 2}, {a: 2, b: 2}]);
     assert.deepEqual(_.filter(list, {}), list, 'Empty object accepts all items');
-    assert.deepEqual(_(list).filter({}), list, 'OO-filter');
+    assert.deepEqual(_.filter(list,{}), list, 'OO-filter');
   });
 
   QUnit.test('select', function(assert) {

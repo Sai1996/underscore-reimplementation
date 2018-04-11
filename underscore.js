@@ -577,34 +577,30 @@ _.identity = function (value) {
 _.some = function (list, predicate, context) {
   list = _.toArray(list);
   var output = false;
-  for(var i = 0; i < list.length; i++){
-    if(_.isFunction(predicate)){
-      if(predicate.call(context,list[i])){
+  for (var i = 0; i < list.length; i++) {
+    if (_.isFunction(predicate)) {
+      if (predicate.call(context, list[i])) {
         output = true;
         break;
       }
-    }
-    else if(_.isUndefined(predicate) || _.isNull(predicate)){
-      if(list[i]){
+    } else if (_.isUndefined(predicate) || _.isNull(predicate)) {
+      if (list[i]) {
         output = true;
-        break;   
+        break;
       }
-    }
-    else if( _.isObject(predicate)){
-      for(const prop in predicate){
-        if(list[i].hasOwnProperty(prop) && predicate[prop] === list[i][prop]){
+    } else if (_.isObject(predicate)) {
+      for (const prop in predicate) {
+        if (list[i].hasOwnProperty(prop) && predicate[prop] === list[i][prop]) {
           output = true;
           break;
-        } 
-        else{
+        } else {
           output = false;
           break;
         }
       }
-    }
-    else if(_.isString(predicate)){
-      for(const prop in list[i]){
-        if(prop === predicate){
+    } else if (_.isString(predicate)) {
+      for (const prop in list[i]) {
+        if (prop === predicate) {
           output = true;
           break;
         }
@@ -615,3 +611,67 @@ _.some = function (list, predicate, context) {
 }
 
 _.any = _.some;
+
+_.filter = function (list, predicate, context) {
+  var output = [];
+  if (_.isUndefined(list) || _.isNull(list) || _.isEmpty(list)) {
+    return output;
+  } 
+  else {
+    if (_.isArray(list)) {
+      for (var i = 0; i < list.length; i++) {
+        if (_.isFunction(predicate)) {
+          if (predicate.call(context, list[i])) {
+            output.push(list[i]);
+          }
+        } else if (_.isString(predicate)) {
+          for (const prop in list[i]) {
+            if (list[i].hasOwnProperty(prop)) {
+              output.push(list[i]);
+              break;
+            }
+          }
+        }
+        else if(_.isObject(predicate)){
+          if(_.isEmpty(predicate)){
+            return list;
+          }
+            for(const prop in predicate){
+              if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
+                output.push(list[i]);
+                break;
+              }
+            }
+        }
+      }
+    } else if (_.isObject(list)) {
+      for (const prop in list) {
+        if (predicate.call(context, list[prop])) {
+          output.push(list[prop]);
+        }
+      }
+    }
+  }
+
+  return output;
+}
+
+_.select = _.filter;
+
+_.where = function (list, properties){
+  var output = [];
+  for(var i = 0; i < list.length; i++){
+    var fit = true;
+    for(const prop in properties){
+      if(!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]){
+        fit = false;
+        break;
+      }
+      
+    }
+    if(fit){
+      output.push(list[i]);
+    }
+  }
+  return output;
+}
