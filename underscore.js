@@ -701,5 +701,37 @@ _.reject = function (list, predicate, context){
 }
 
 _.every = function (list, predicate, context){
+  var allTrue = true;
+  list = _.toArray(list);
+  for(var i = 0; i < list.length; i++){
+    if(_.isFunction(predicate)){
+      if(!predicate.call(context ,list[i])){
+        allTrue = false;
+        break;
+      }
+    }
+    else if(_.isObject(predicate)){
+      for(const prop in predicate){
+        if(!list[i].hasOwnProperty(prop) || list[i][prop] !== predicate[prop]){
+          allTrue = false;
+          break;
+        }
+      }
+    }
+    else if(_.isString(predicate)){
+      if(!list[i].hasOwnProperty(predicate)){
+        allTrue = false;
+        break;
+      }
+    }
+  }
+  return allTrue;
+}
 
+_.pluck = function (list, propertyName){
+  var output = [];
+  for(var i = 0; i < list.length; i++){
+    output.push(list[i][propertyName]);
+  }
+  return output;
 }
