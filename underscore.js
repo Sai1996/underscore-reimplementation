@@ -559,6 +559,18 @@ _.indexOf = function (array, value, isSorted) {
   }
   var arr = _.toArray(array);
   var pos = -1;
+  if(isSorted === -Infinity){
+    isSorted = 0;
+  }
+  if(!_.isUndefined(isSorted) && !_.isNumber(isSorted)){
+    isSorted = true;
+  }
+  if(isSorted < 0){
+    isSorted += arr.length;
+  }
+  if(_.isBoolean(isSorted)){
+    isSorted = undefined;
+  }
   if (_.isArray(arr)) {
     for (var i = (_.isUndefined(isSorted) ? 0 : Number(isSorted)); i < arr.length; i++) {
       if (arr[i] === value || (_.isNaN(arr[i]) && _.isNaN(value))) {
@@ -735,3 +747,78 @@ _.pluck = function (list, propertyName){
   }
   return output;
 }
+
+_.max = function (list, iteratee, context){
+  var output = -Infinity;
+  if(_.isEmpty(list) || _.isUndefined(list)){
+    return output;
+  }
+  list = _.toArray(list);
+  for(var i = 0; i < list.length; i++){
+    var cur;
+    if(!_.isUndefined(iteratee) && _.isFunction(iteratee)){
+      cur = iteratee.call(context,list[i]);
+      if(cur >= output){
+        output = list[i];
+      }
+    }
+    else if(_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))){
+      if(output === -Infinity){
+        output = list[i];
+      }
+      else{
+        if(list[i][iteratee] > output[iteratee]){
+          output = list[i];
+        }
+      }
+    }
+   else{
+     if(list[i] >= output){
+       output = list[i];
+     }
+   }
+  }
+  return output;
+}
+
+_.min = function (list, iteratee, context){
+  var output = Infinity;
+  if(_.isEmpty(list)){
+    return output;
+  }
+  
+}
+_.range = function (start, stop, step){
+  var args = Array.prototype.slice.call(arguments);
+  if(args.length === 3){
+    start = args[0];
+    stop = args[1];
+    step = args[2];
+  }
+  else if(args.length === 2){
+    start = args[0];
+    stop = args[1];
+    step = (start > stop ? -1 : 1);
+  }
+  else{
+    start = 0;
+    stop = args[0];
+    step = (start > stop ? -1 : 1);
+  }
+  var output = [];
+  if(stop <= start && step > 0){
+    return output;
+  }
+  if(stop < start){
+    for(var i = start; i > stop; i += step){
+      output.push(i);
+    }
+  }
+  else{
+    for(var i = start; i < stop; i += step){
+      output.push(i);
+    }
+  }
+  return output;
+}
+
