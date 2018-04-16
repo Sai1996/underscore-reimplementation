@@ -814,6 +814,7 @@ _.min = function (list, iteratee, context){
   }
   return output;
 }
+
 _.range = function (start, stop, step){
   var args = Array.prototype.slice.call(arguments);
   if(args.length === 3){
@@ -846,5 +847,9 @@ _.range = function (start, stop, step){
     }
   }
   return output;
+}
+
+_.shuffle = function (){
+
 }
 
