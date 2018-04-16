@@ -786,7 +786,33 @@ _.min = function (list, iteratee, context){
   if(_.isEmpty(list)){
     return output;
   }
-  
+  list = _.toArray(list);
+  for(var i = 0; i < list.length; i++){
+    var cur;
+    if(!_.isUndefined(iteratee) && _.isFunction(iteratee)){
+      cur = iteratee.call(context,list[i]);
+      if(cur <= output && !_.isNull(cur)){
+        output = list[i];
+      }
+    }
+    else if(_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))){
+      cur = list[i][iteratee];
+      if(output === Infinity){
+        output = list[i];
+      }
+      else{
+        if(cur <= output[iteratee]){
+          output = list[i];
+        }
+      } 
+    }
+    else{
+      if(list[i] <= output && !_.isNull(list[i])){
+        output = list[i];
+      }
+    }
+  }
+  return output;
 }
 _.range = function (start, stop, step){
   var args = Array.prototype.slice.call(arguments);
