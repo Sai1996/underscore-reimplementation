@@ -849,7 +849,87 @@ _.range = function (start, stop, step){
   return output;
 }
 
-_.shuffle = function (){
-
+_.shuffle = function (list){
+  list = _.toArray(list);
+  for(var i = list.length - 1; i >= 0; i--){
+    var posIndex = Math.floor(Math.random() * Math.floor(i));
+    var posVal = list[posIndex];
+    var toPos = i;
+    var toVal = list[i];
+    list[toPos] = posVal;
+    list[posIndex] = toVal;
+  }
+  return list;
 }
 
+_.sortBy = function (list, iteratee, context){
+  list = _.toArray(list);
+  var output = list.sort(function( a, b){
+    if(_.isFunction(iteratee)){
+      return iteratee.call(context,a) - iteratee.call(context, b);
+    }
+    else if(_.isString(iteratee)){
+      if(iteratee === 'length'){
+        return a.length - b.length;
+      }
+      else{
+        return list[a][iteratee] - list[b][iteratee];
+      }
+    }
+  })
+  return output;
+}
+
+_.object = function (list, values){
+  if(arguments.length !== 1){
+    values = _.toArray(values);
+  }
+  list = _.toArray(list);
+  var output = new Object();
+  for(var i = 0; i < list.length; i++){
+    if(!_.isUndefined(values)){
+      output.list[i] = values[i];
+    }
+    else{
+      output.list[i][0] = list[i][1];
+    }
+  }
+  return output;
+}
+
+_.size = function(list){
+  if(_.isNull(list) || _.isUndefined(list)){
+    return 0;
+  }
+  if(list.hasOwnProperty(length)){
+    return list.length;
+  }
+  list = _.toArray(list);
+  return list.length;
+}
+
+_.sample = function(list, n){
+  if(arguments.length === 1){
+    n = 1;
+  }
+  var index;
+  var output = [];
+  var dup = [];
+  list = _.toArray(list);
+  for(var i = 0; i < list.length; i++){
+    dup.push(list[i]);
+  }
+  if(n === 1){
+     index = Math.floor(Math.random() * Math.floor(list.length))
+     return list[index];
+  }
+  if(n > list.length){
+    n = list.length;
+  }
+  for(var i = 0; i < n; i++){
+    index = Math.floor(Math.random() * Math.floor(dup.length))
+    output.push(dup[index]);
+    dup.splice(index,1);
+  }
+  return output;
+}
