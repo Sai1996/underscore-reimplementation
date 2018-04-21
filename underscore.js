@@ -657,7 +657,7 @@ _.filter = function (list, predicate, context) {
       }
     } else if (_.isObject(list)) {
       for (const prop in list) {
-        if (predicate.call(context, list[prop])) {
+        if (predicate.call(context,list[prop],prop)) {
           output.push(list[prop]);
         }
       }
@@ -932,4 +932,8 @@ _.sample = function(list, n){
     dup.splice(index,1);
   }
   return output;
+}
+
+_.find = function(){
+  
 }
