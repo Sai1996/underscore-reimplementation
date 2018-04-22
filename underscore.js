@@ -239,27 +239,43 @@ _.isEqual = function (object, other) {
 }
 _.findIndex = function (array, predicate, context) {
   var found = -1;
-  if (typeof predicate == "function") {
+  if(_.isNull(array)){
+    return found;
+  }
     for (var i = 0; i < array.length; i++) {
-      if (predicate.call(context, array[i], i, array)) {
+      if (_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
         found = i;
         break;
       }
+      else if(_.isString(predicate)){
+        if(array[i].hasOwnProperty(predicate) && !!array[i][predicate]){
+          found = i;
+          break;
+        }
+      }
     }
-  }
+  
   return found;
 }
 
 _.findLastIndex = function (array, predicate, context) {
   var found = -1;
-  if (typeof predicate == "function") {
+  if(_.isNull(array)){
+    return found;
+  }
     for (var i = array.length - 1; i >= 0; i--) {
-      if (predicate.call(context, array[i], i, array)) {
+      if(_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
         found = i;
         break;
       }
+      else if(_.isString(predicate)){
+        if(array[i].hasOwnProperty(predicate) && !!array[i][predicate]){
+          found = i;
+          break;
+        }
+      }
     }
-  }
+  
   return found;
 }
 
@@ -934,6 +950,45 @@ _.sample = function(list, n){
   return output;
 }
 
-_.find = function(){
-  
+_.find = function(list, predicate, context){
+  list = _.toArray(list);
+  var output = undefined;
+  for(var i = 0; i < list.length; i++){
+    if(_.isFunction(predicate) && predicate.call(context,list[i])){
+      output = list[i];
+      return output;
+    }
+    else if(_.isObject(predicate)){
+      for(const prop in predicate){
+        if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
+          output = list[i];
+        }
+        else{
+          output = undefined;
+          break;
+        }
+      }
+      if(!_.isUndefined(output)){
+        return output;
+      }
+    }
+  }
+}
+
+_.findKey = function(object, predicate, context){
+  var found = undefined;
+  if(_.isNull(object)){
+    return found;
+  }
+  for(const prop in object){
+    if(_.isFunction(predicate) && predicate.call(context,object[prop])){
+      found = prop;
+      break;
+    }
+   else if(_.isString(predicate) && object.hasOwnProperty(predicate) && !!object[prop][predicate]){
+     found = prop;
+     break;
+   }
+  }
+  return found;
 }
