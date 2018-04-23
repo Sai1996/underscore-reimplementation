@@ -113,7 +113,7 @@ _.isError = function (object) {
 }
 
 _.isObject = function (object) {
-  if ((typeof object === "object" || typeof object === "function") && object != null) {
+  if (Object.prototype.toString.call(object) === "[object Object]" && object != null) {
     return true;
   }
   return false;
@@ -981,7 +981,7 @@ _.findKey = function(object, predicate, context){
     return found;
   }
   for(const prop in object){
-    if(_.isFunction(predicate) && predicate.call(context,object[prop])){
+    if(_.isFunction(predicate) && predicate.call(context,object[prop],prop,object)){
       found = prop;
       break;
     }
@@ -991,4 +991,68 @@ _.findKey = function(object, predicate, context){
    }
   }
   return found;
+}
+
+_.partition = function(list, predicate,context){
+  if(!_.isObject(list)){
+    list = _.toArray(list);
+  }
+  var pass = [];
+  var notPass = [];
+  var output = [];
+  if(_.isObject(list)){
+    for(const prop in list){
+      if(_.isFunction(predicate)){
+        if(predicate.call(context,list[prop], prop, list)){
+          pass.push(list[prop]);
+        }
+        else{
+          notPass.push(list[prop]);
+        }
+      }
+    }
+  }
+  else{
+    for(var i = 0; i < list.length; i++){
+      if(_.isFunction(predicate)){
+        if(predicate.call(context,list[i],i,list)){
+          pass.push(list[i]);
+        }
+        else{
+          notPass.push(list[i]);
+        }
+      }
+      else if(_.isUndefined(predicate)){
+        if(!!list[i]){
+          pass.push(list[i]);
+        }
+        else{
+          notPass.push(list[i]);
+        }
+      }
+      else if(_.isString(predicate)){
+        if(!!list[i][predicate]){
+          pass.push(list[i]);
+        }
+        else{
+          notPass.push(list[i]);
+        }
+      }
+      else if(_.isObject(predicate)){
+        for(const prop in predicate){
+          if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
+            pass.push(list[i]);
+          }
+          else{
+            notPass.push(list[i]);
+          }
+        }
+      }
+    }
+ 
+  }
+    
+  output.push(pass);
+  output.push(notPass);
+  return output;
 }
