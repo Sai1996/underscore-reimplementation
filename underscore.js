@@ -364,8 +364,8 @@ _.map = function (list, iteratee, context) {
     }
   } else if (Object.prototype.toString.call(list) === "[object String]" || Object.prototype.toString.call(list) === "[object Array]")
     for (var i = 0; i < list.length; i++) {
-      if (Object.prototype.toString.call(iteratee) === "[object Function]" && iteratee.call(context, list[i], i, list) !== undefined) {
-        output.push(iteratee.call(context, list[i], i, list));
+      if (Object.prototype.toString.call(iteratee) === "[object Function]" && iteratee.call(context, list[i]) !== undefined) {
+        output.push(iteratee.call(context, list[i]));
       } else {
         output.push(list[i][iteratee]);
       }
@@ -1054,5 +1054,89 @@ _.partition = function(list, predicate,context){
     
   output.push(pass);
   output.push(notPass);
+  return output;
+}
+
+_.first = function(list, n){
+  if(_.isNull(list) || _.isEmpty(list)){
+    return undefined;
+  }
+  if(arguments.length === 1){
+    return list[0];
+  }
+  list = _.toArray(list);
+  var output = list.splice(0,n);
+  return output;
+}
+
+_.head = _.first;
+_.take = _.first;
+
+_.initial = function(list,n){
+  if(_.isNull(list) || _.isEmpty(list)){
+    return undefined;
+  }
+  list = _.toArray(list);
+  var output = [];
+  if(arguments.length === 1){
+    output = list.splice(0,list.length - 1);
+    return output;
+  }
+  output = list.splice(0, list.length - n);
+  return output;
+}
+
+_.last = function(list, n){
+  if(_.isNull(list) || _.isEmpty(list)){
+    return undefined;
+  }
+  list = _.toArray(list);
+  var output;
+  if(arguments.length === 1){
+    output = list[list.length - 1];
+    return output;
+  }
+  if(n > list.length){
+    return list;
+  }
+  output = list.splice(list.length - n);
+  return output;
+}
+
+_.rest = function(list, index){
+  if(_.isNull(list) || _.isEmpty(list)){
+    return undefined;
+  }
+  list = _.toArray(list);
+  var output;
+  if(arguments.length === 1){
+    output = list.splice(1, list.length - 1);
+    return output;
+  }
+  output = list.splice(index);
+  return output;
+}
+
+_.compact = function(list){
+  var output = [];
+  for(var i = 0; i < list.length; i++){
+    if(!!list[i]){
+      output.push(list[i]);
+    }
+  }
+  return output;
+}
+
+_.without = function (list, values){
+  var output = [];
+  var valueList = [];
+  for(var i = 1; i < arguments.length; i++){
+    valueList.push(arguments[i]);
+  }
+  for(var i = 0; i < list.length; i++){
+    if(valueList.indexOf(list[i]) === -1){
+      output.push(list[i]);
+    }
+  }
   return output;
 }

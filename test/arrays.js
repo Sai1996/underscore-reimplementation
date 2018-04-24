@@ -5,7 +5,7 @@
 
   QUnit.test('first', function (assert) {
     assert.strictEqual(_.first([1, 2, 3]), 1, 'can pull out the first element of an array');
-    assert.strictEqual(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
+    assert.strictEqual(_.first([1, 2, 3]), 1, 'can perform OO-style "first()"');
     assert.deepEqual(_.first([1, 2, 3], 0), [], 'returns an empty array when n <= 0 (0 case)');
     assert.deepEqual(_.first([1, 2, 3], -1), [], 'returns an empty array when n <= 0 (negative case)');
     assert.deepEqual(_.first([1, 2, 3], 2), [1, 2], 'can fetch the first n elements');
@@ -40,7 +40,7 @@
     assert.deepEqual(_.rest(numbers, 0), [1, 2, 3, 4], 'returns the whole array when index is 0');
     assert.deepEqual(_.rest(numbers, 2), [3, 4], 'returns elements starting at the given index');
     var result = (function () {
-      return _(arguments).rest();
+      return _.rest(arguments);
     }(1, 2, 3, 4));
     assert.deepEqual(result, [2, 3, 4], 'works on an arguments object');
     result = _.map([
