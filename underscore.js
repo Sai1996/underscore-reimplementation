@@ -1140,3 +1140,70 @@ _.without = function (list, values){
   }
   return output;
 }
+
+_.zip = function (arrays){
+  
+  var output = [];
+  if(_.isNull(arrays) || _.isUndefined(arrays) || _.isEmpty(arrays)){
+    return output;
+  }
+  var arr = Array.prototype.slice.call(arguments);
+  var maxLength = 0;
+  for(var i = 0; i < arr.length; i++){
+    if(arr[i].length > maxLength){
+      maxLength = arr[i].length;
+    }
+  }
+  for(var i = 0; i < maxLength; i++){
+    var cur = [];
+    for(var j = 0; j < arr.length; j++){
+      if(_.isUndefined(arr[j][i])){
+        cur.push(undefined);
+      }
+      else{
+        cur.push(arr[j][i]);
+      }
+    }
+    output.push(cur);
+  }
+  return output;
+}
+
+_.unzip = function (array){
+  var output = [];
+  if(_.isNull(array) || _.isUndefined(array) || _.isEmpty(array)){
+    return output;
+  }
+  for(var i = 0; i < array[0].length; i++){
+    var cur = [];
+    for(var j = 0; j < array.length; j++){
+      if(_.isUndefined(array[j][i])){
+        cur.push(undefined);
+      }
+      else{
+        cur.push(array[j][i]);
+      }
+    }
+    output.push(cur);
+  }
+  return output;
+}
+
+_.chunk = function (array,length){
+  var output = [];
+  if(_.isNull(array) || _.isUndefined(array) || _.isEmpty(array) || _.isUndefined(length) || length === -1 || length === 0){
+    return output;
+  }
+  while(!_.isEmpty(array)){
+    var cur = array.splice(0, length);
+    output.push(cur);
+  }
+  return output;
+}
+
+_.keys = function(object){
+  var output = [];
+  for(const prop in object){
+    
+  }
+}
