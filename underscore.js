@@ -1202,8 +1202,17 @@ _.chunk = function (array,length){
 }
 
 _.keys = function(object){
-  var output = [];
-  for(const prop in object){
-    
+  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+    return [];
   }
+  var output = Object.keys(object);
+  return output;
+}
+
+_.allKeys = function(object){
+  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+    return [];
+  }
+  var output = Object.getOwnPropertyNames(object);
+  return output;
 }
