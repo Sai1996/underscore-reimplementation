@@ -1213,6 +1213,37 @@ _.allKeys = function(object){
   if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
     return [];
   }
-  var output = Object.getOwnPropertyNames(object);
+  var output = [];
+  for(const prop in object){
+    output.push(prop);
+  }
   return output;
+}
+
+_.values = function(object){
+  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+    return [];
+  }
+  var output = [];
+  for(const prop in object){
+    output.push(object[prop]);
+  }
+  return output;
+}
+
+_.mapObject = function(object, iteratee, context){
+  if(!_.isArray(object)){
+    for(const prop in object){
+      object[prop] = iteratee.call(context, object[prop],prop,object);
+    }
+    return object;
+  }
+ else{
+   var output = new Object();
+   for(var i = 0; i < object.length; i++){
+     output[i] = iteratee.call(context, object[i],i,object);
+   }
+   return output;
+ }
+  
 }
