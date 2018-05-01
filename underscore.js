@@ -1232,18 +1232,43 @@ _.values = function(object){
 }
 
 _.mapObject = function(object, iteratee, context){
+  var output = new Object();
   if(!_.isArray(object)){
     for(const prop in object){
-      object[prop] = iteratee.call(context, object[prop],prop,object);
+      if(_.isObject(object[prop])){
+        output = _.mapObject.call(context,object[prop], iteratee);
+      }
+      else{
+        output[prop] = iteratee.call(context, object[prop],prop,object);
+      }
+      
     }
-    return object;
   }
  else{
-   var output = new Object();
+   
    for(var i = 0; i < object.length; i++){
      output[i] = iteratee.call(context, object[i],i,object);
    }
-   return output;
- }
   
+ }
+ return output;
+}
+
+_.pairs = function (object){
+  var output = [];
+  for(const prop in object){
+    var cur = [];
+    cur.push(prop);
+    cur.push(object[prop]);
+    output.push(cur);
+  }
+  return output;
+}
+
+_.invert = function (object){
+  var output = new Object();
+  for(const prop in object){
+    output[object[prop]] = prop;
+  }
+  return output;
 }
