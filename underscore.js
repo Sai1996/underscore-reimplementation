@@ -1272,3 +1272,41 @@ _.invert = function (object){
   }
   return output;
 }
+
+_.create = function(prototype, props){
+  if(!_.isObject(prototype)){
+    if(!_.isArray(prototype)){
+      return {};
+    }
+    else{
+      return new Array();
+    }
+  }
+  var output = Object.create(prototype);
+  for(const prop in props){
+    output[prop] = props[prop];
+  }
+  return output;
+}
+
+_.functions = function(object){
+  var output = [];
+  for(const prop in object){
+    if(_.isFunction(object[prop])){
+      output.push(prop);
+    }
+  }
+  output.sort();
+  return output;
+}
+
+_.findKey = function (object, iteratee, context){
+  for(const prop in object){
+    if(_.isFunction(iteratee) && iteratee.call(context, object[prop],prop, object)){
+      return prop;
+    }
+    else if(_.isString(iteratee) && !!object[prop][iteratee]){
+      return prop;
+    }
+  }
+}
