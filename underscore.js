@@ -1310,3 +1310,68 @@ _.findKey = function (object, iteratee, context){
     }
   }
 }
+
+_.extend = function(destination, sources){
+  sources = Array.prototype.slice.call(arguments);
+  sources.splice(0,1);
+  if(_.isNull(destination) || _.isUndefined(destination)){
+    return destination;
+  }
+  for(var i = 0; i < sources.length; i++){
+      for(const prop in sources[i]){
+        destination[prop] = sources[i][prop];
+      }
+  } 
+   return destination;
+}
+
+_.extendOwn = function (destination, sources){
+  sources = Array.prototype.slice.call(arguments);
+  sources.splice(0,1);
+  if(_.isNull(destination) || _.isUndefined(destination)){
+    return destination;
+  }
+  for(var i = 0; i < sources.length; i++){
+      for(const prop in sources[i]){
+        if(sources[i].hasOwnProperty(prop)){
+          destination[prop] = sources[i][prop];
+        }
+       
+      }
+  } 
+   return destination;
+}
+
+_.assign = _.extendOwn;
+
+_.pick = function(object, keys){
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(0,1);
+  var output = new Object();
+  if(_.isFunction(keys)){
+    for(const prop in object){
+      if(keys(prop, object[prop],object)){
+        output[prop] = object[prop];
+      }
+    }
+  }
+  else if(_.isNumber(args[0])){
+    for(var i = 0; i < args.length; i++){
+      if(args[i] < object.length){
+        output[args[i]] = object[args[i]];
+      }
+    }
+  }
+  else{
+    for(const prop in object){
+      for(var i = 0; i < args.length; i++){
+        if(args[i].indexOf(prop) !== -1){
+          output[prop] = object[prop];
+          break;
+        }
+      }
+      
+    }
+  }
+  return output;
+}
