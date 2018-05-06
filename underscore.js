@@ -1344,34 +1344,68 @@ _.extendOwn = function (destination, sources){
 
 _.assign = _.extendOwn;
 
+/*Not finished*/
 _.pick = function(object, keys){
   var args = Array.prototype.slice.call(arguments);
   args.splice(0,1);
   var output = new Object();
-  if(_.isFunction(keys)){
-    for(const prop in object){
-      if(keys(prop, object[prop],object)){
-        output[prop] = object[prop];
+  if(_.isObject(object) || _.isArray(object)){
+    if(_.isFunction(keys)){
+      for(const prop in object){
+        if(keys(prop, object[prop],object)){
+          output[prop] = object[prop];
+        }
+      }
+    }
+    else if(_.isNumber(args[0])){
+      for(var i = 0; i < args.length; i++){
+        if(args[i] < object.length){
+          output[args[i]] = object[args[i]];
+        }
+      }
+    }
+    else{
+      for(const prop in object){
+        for(var i = 0; i < args.length; i++){
+          if(args[i].indexOf(prop) !== -1){
+            output[prop] = object[prop];
+            break;
+          }
+        } 
       }
     }
   }
-  else if(_.isNumber(args[0])){
-    for(var i = 0; i < args.length; i++){
-      if(args[i] < object.length){
-        output[args[i]] = object[args[i]];
-      }
-    }
+  else if(_.isUndefined(object) || _.isNull(object)){
+    return output;
   }
   else{
-    for(const prop in object){
-      for(var i = 0; i < args.length; i++){
-        if(args[i].indexOf(prop) !== -1){
-          output[prop] = object[prop];
-          break;
-        }
+    var type = Object.prototype.toString.call(object);
+    type = type.slice(8);
+    type = type.slice(0,-1);
+    var oriType = new window[type];
+    for(var i = 0; i < args.length; i++){
+      if(args[i] in oriType){
+        output[args[i]] = oriType[args[i]];
       }
       
     }
   }
   return output;
+}
+
+_.defaults = function (object, defaults){
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(0,1);
+  if(_.isUndefined(object) || _.isNull(object)){
+    object = new Object();
+  }
+  for(var i = 0; i < args.length; i++){
+    for(const prop in args[i]){
+      if(!object.hasOwnProperty(prop)){
+        object[prop] = args[i][prop];
+      }
+    }
+  }
+  
+  return object;
 }
