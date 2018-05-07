@@ -1409,3 +1409,15 @@ _.defaults = function (object, defaults){
   
   return object;
 }
+
+_.has = function(object, key){
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(0,1);
+  var output = false;
+  for(var i = 0; i < args.length; i++){
+    if(object.hasOwnProperty(args[i])){
+      output = true; 
+    }
+  }
+  return output;
+}
