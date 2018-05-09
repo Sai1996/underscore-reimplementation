@@ -1411,13 +1411,39 @@ _.defaults = function (object, defaults){
 }
 
 _.has = function(object, key){
-  var args = Array.prototype.slice.call(arguments);
-  args.splice(0,1);
+  var args = key;
   var output = false;
-  for(var i = 0; i < args.length; i++){
-    if(object.hasOwnProperty(args[i])){
+  if(_.isUndefined(object) || _.isNull(object)){
+    return output;
+  }
+  if(_.isArray(args)){
+    for(var i = 0; i < args.length; i++){
+      if(Object.prototype.hasOwnProperty.call(object,args[i])){
+        output = true; 
+        if(_.isObject(object[args[i]])){
+          output = _.has(object[args[i]],args);
+        }
+      }
+    }
+  }
+  else{
+    if(Object.prototype.hasOwnProperty.call(object,args)){
       output = true; 
     }
   }
   return output;
+}
+
+_.isSymbol = function(object){
+  if(typeof object !== "object"){
+    return typeof object === "symbol";
+  }
+  return object.constructor === Symbol;
+}
+
+_.isMap = function(object){
+  if(typeof object !== "object"){
+    return Object.prototype.toString.call(object) === "[object map]";
+  }
+  return object.constructor === Map;
 }
