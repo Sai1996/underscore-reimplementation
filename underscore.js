@@ -1447,3 +1447,32 @@ _.isMap = function(object){
   }
   return object.constructor === Map;
 }
+
+_.property = function (path) {
+  return function (object) {
+    if (_.isUndefined(object) || _.isNull(object) || _.isEmpty(path)) {
+      return undefined;
+    }
+      if (_.isArray(path)) {
+        var cur = object;
+        for (var i = 0; i < path.length; i++){
+          if (!_.isUndefined(cur) && !_.isNull(cur)) {
+            cur = cur[path[i]];
+          }
+          else {
+            return undefined;
+          }
+        }
+        return cur;
+      }
+      else {
+        return object[path];
+      }
+  }
+}
+
+_.propertyOf = function (object) {
+  return function (path) {
+    
+  }
+}
