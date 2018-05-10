@@ -182,11 +182,13 @@ _.isFinite = function (object) {
 
 _.isEqual = function (object, other) {
   var testIsNaN = function (a, b) {
+    //Number
     if (typeof a == "number" && typeof b == "number" && isNaN(a) && isNaN(b)) {
       return true;
     }
     return false;
   }
+  //Array
   if (object instanceof Array && other instanceof Array) {
     if (object.length == other.length) {
       var same = true;
@@ -200,6 +202,7 @@ _.isEqual = function (object, other) {
     }
     return false;
   }
+  //Object
   if (object === other) {
     if ((1 / object === -Infinity && 1 / other !== -Infinity) || (1 / object !== -Infinity && 1 / other === -Infinity)) {
       return false;
@@ -232,6 +235,13 @@ _.isEqual = function (object, other) {
     }
 
     if (String(object) === String(other)) {
+      if(_.isObject(object) && _.isObject(other)){
+        for(const prop in object){
+          if(!other.hasOwnProperty(prop) || other[prop] !== object[prop]){
+            //return false;
+          }
+        }
+      }
       return true;
     }
     return false;
@@ -1473,6 +1483,57 @@ _.property = function (path) {
 
 _.propertyOf = function (object) {
   return function (path) {
-    
+    if(_.isUndefined(object) || _.isNull(object) || _.isEmpty(path)){
+      return undefined;
+    }
+    if(_.isArray(path)){
+      var cur = object;
+      for(var i = 0; i < path.length; i++){
+          if (!_.isUndefined(cur) && !_.isNull(cur)) {
+            cur = cur[path[i]];
+          }
+          else {
+            return undefined;
+          }
+      }
+      return cur;
+    }
+    else{
+      return object[path];
+    }
   }
+}
+
+_.isWeakMap = function (object) {
+  if(typeof object !== "object"){
+    return Object.prototype.toString.call(object) === "[object map]";
+  }
+  return object.constructor === WeakMap;
+}
+
+_.isSet = function (object) {
+  if(typeof object !== "object"){
+    return Object.prototype.toString.call(object) === "[object set]";
+  }
+  return object.constructor === Set;
+}
+
+_.noop = function () {
+  return undefined;
+}
+
+_.random = function (min,max) {
+  if(arguments.length !== 2){
+    max = min;
+    min = 0
+  }
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+_.iteratee = function (value, context) {
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(0,1);
+  
 }
