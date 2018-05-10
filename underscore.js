@@ -1533,7 +1533,45 @@ _.random = function (min,max) {
 }
 
 _.iteratee = function (value, context) {
-  var args = Array.prototype.slice.call(arguments);
-  args.splice(0,1);
   
 }
+
+_.uniqueId = function (prefix) {
+  var output = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  if (!_.isUndefined(prefix)) {
+    output = prefix + output;
+  }
+  return output;
+}
+
+_.unescape = function (string) {
+  var text = document.createElement('text');
+  text.innerHTML = string;
+  return text.innerText;
+}
+
+_.escape = function (string) {
+  if (_.isUndefined(string) || _.isNull(string)) {
+    return "";
+  }
+  // List of HTML entities for escaping.
+var htmlEscapes = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+  '/': '&#x2F;'
+};
+
+// Regex containing the keys listed immediately above.
+var htmlEscaper = /[&<>"'\/]/g;
+// Escape a string for HTML interpolation.
+  return string.replace(htmlEscaper, function(match) {
+    return htmlEscapes[match];
+  });
+}
+
