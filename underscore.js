@@ -1532,10 +1532,6 @@ _.random = function (min,max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-_.iteratee = function (value, context) {
-  
-}
-
 _.uniqueId = function (prefix) {
   var output = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -1575,3 +1571,39 @@ var htmlEscaper = /[&<>"'\/]/g;
   });
 }
 
+_.result = function (object, property, defaultValue){
+  if(_.isUndefined(object) || _.isNull(object)){
+    return defaultValue;
+  }
+  //Check for ownProperty and inherited ones
+  var hasIt = false;
+  //For not nested object
+  if(!_.isArray(property)){
+    for(const prop in object){
+      if(prop === property){
+        hasIt = true;
+        break;
+      }
+    }
+  }
+  //For nested object
+  else{
+    for(var i = 0; i < property.length; i++){
+
+    }
+  }
+  if(!hasIt || _.isUndefined(object[property])){
+    if(_.isFunction(defaultValue)){
+      return defaultValue.call(object);
+    }
+    return defaultValue;
+  }
+  else{
+    if(_.isFunction(object[property])){
+      return object[property].call(object);
+    }
+    else{
+      return object[property];
+    }
+  }
+}
