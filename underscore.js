@@ -1573,10 +1573,14 @@ var htmlEscaper = /[&<>"'\/]/g;
 
 _.result = function (object, property, defaultValue){
   if(_.isUndefined(object) || _.isNull(object)){
+    if(_.isFunction(defaultValue)){
+      return defaultValue.call(object);
+    }
     return defaultValue;
   }
   //Check for ownProperty and inherited ones
   var hasIt = false;
+  var parent;
   //For not nested object
   if(!_.isArray(property)){
     for(const prop in object){
@@ -1588,11 +1592,25 @@ _.result = function (object, property, defaultValue){
   }
   //For nested object
   else{
+    var cur = object;
     for(var i = 0; i < property.length; i++){
-
+      if(cur.hasOwnProperty(property[i]) && !_.isUndefined(cur[property[i]])){
+        if(_.isFunction(cur[property[i]]) && i !== property.length){
+          parent = cur;
+          cur = cur[property[i]].call(parent);
+        }
+        else{
+          parent = cur;
+          cur = cur[property[i]];
+        }
+        
+        hasIt = true;
+      }
+     
     }
+    
   }
-  if(!hasIt || _.isUndefined(object[property])){
+  if(!hasIt || (_.isUndefined(object[property]) && !_.isArray(property))){
     if(_.isFunction(defaultValue)){
       return defaultValue.call(object);
     }
@@ -1601,6 +1619,12 @@ _.result = function (object, property, defaultValue){
   else{
     if(_.isFunction(object[property])){
       return object[property].call(object);
+    }
+    else if(cur){
+      if(_.isFunction(cur)){
+        return cur.call(parent );
+      }
+      return cur;
     }
     else{
       return object[property];
