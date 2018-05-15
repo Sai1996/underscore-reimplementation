@@ -10,7 +10,7 @@
     var bound = _.bind(func, context);
     assert.strictEqual(bound(), 'name: moe', 'can bind a function to a context');
 
-    bound = _(func).bind(context);
+    bound = _.bind(func, context);
     assert.strictEqual(bound(), 'name: moe', 'can do OO-style binding');
 
     bound = _.bind(func, null, 'curly');

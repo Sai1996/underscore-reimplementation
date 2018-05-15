@@ -1581,12 +1581,21 @@ _.result = function (object, property, defaultValue){
   //Check for ownProperty and inherited ones
   var hasIt = false;
   var parent;
+  var symbolKeys = Object.getOwnPropertySymbols(object);
   //For not nested object
   if(!_.isArray(property)){
     for(const prop in object){
       if(prop === property){
         hasIt = true;
         break;
+      }
+    }
+    if(symbolKeys.length !== 0){
+      for(var i = 0; i < symbolKeys.length; i++){
+        if(symbolKeys[i] === property){
+          hasIt = true;
+          break;
+        }
       }
     }
   }
@@ -1603,21 +1612,19 @@ _.result = function (object, property, defaultValue){
           parent = cur;
           cur = cur[property[i]];
         }
-        
         hasIt = true;
       }
-     
     }
     
   }
-  if(!hasIt || (_.isUndefined(object[property]) && !_.isArray(property))){
+  if(!hasIt || (!_.isArray(property) && _.isUndefined(object[property]))){
     if(_.isFunction(defaultValue)){
       return defaultValue.call(object);
     }
     return defaultValue;
   }
   else{
-    if(_.isFunction(object[property])){
+    if(!_.isArray(property) && _.isFunction(object[property])){
       return object[property].call(object);
     }
     else if(cur){
@@ -1631,3 +1638,12 @@ _.result = function (object, property, defaultValue){
     }
   }
 }
+
+_.bind = function(func, object, args) {
+  var arg = _.toArray(arguments).slice(2);
+  return function (){
+    var cur = _.partial.apply(_, [func].concat(arg));
+    return cur.apply(object, arguments);
+  }
+}
+
