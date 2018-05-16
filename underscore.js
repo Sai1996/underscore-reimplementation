@@ -1639,6 +1639,7 @@ _.result = function (object, property, defaultValue){
   }
 }
 
+//Not finished
 _.bind = function(func, object, args) {
   var arg = _.toArray(arguments).slice(2);
   return function (){
@@ -1647,3 +1648,23 @@ _.bind = function(func, object, args) {
   }
 }
 
+_.memoize = function(func,hashFunc){
+  var cache = {};
+ var newFunc = function(){
+    var firstArg = arguments[0];
+    if(cache.hasOwnProperty(firstArg)){
+      return cache[firstArg];
+    }
+    else{
+      if(_.isUndefined(hashFunc)){
+        cache[firstArg] = func.apply(this,arguments);
+      }
+      else{
+        cache[hashFunc(firstArg)] = func.apply(this,arguments);
+      }
+      return cache[firstArg];
+    }
+  }
+  newFunc.cache = cache;
+  return newFunc;
+}
