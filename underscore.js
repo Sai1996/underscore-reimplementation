@@ -1650,21 +1650,32 @@ _.bind = function(func, object, args) {
 
 _.memoize = function(func,hashFunc){
   var cache = {};
- var newFunc = function(){
+  var newFunc = function(){
+    cache = newFunc.cache;
     var firstArg = arguments[0];
+    var curKey = _.isUndefined(hashFunc) ? undefined : hashFunc.apply(this,arguments);
     if(cache.hasOwnProperty(firstArg)){
       return cache[firstArg];
+    }
+    else if(cache.hasOwnProperty(curKey)){
+      return cache[curKey];
     }
     else{
       if(_.isUndefined(hashFunc)){
         cache[firstArg] = func.apply(this,arguments);
+        return cache[firstArg];
       }
       else{
-        cache[hashFunc(firstArg)] = func.apply(this,arguments);
+        var key = hashFunc.apply(this,arguments);
+        cache[key] = func.apply(this,arguments);
+        return cache[key];
       }
-      return cache[firstArg];
     }
   }
   newFunc.cache = cache;
   return newFunc;
+}
+
+_.delay = function(func, wait, argument){
+  return setTimeout.apply(window, arguments);
 }
