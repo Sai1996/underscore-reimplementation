@@ -1679,3 +1679,41 @@ _.memoize = function(func,hashFunc){
 _.delay = function(func, wait, argument){
   return setTimeout.apply(window, arguments);
 }
+
+_.once = function(func) {
+  var executed = false;
+  var newFunc = function(){
+      if(!executed){
+        executed = true;
+        newFunc.result = func();
+      }
+      return newFunc.result;
+  }
+  return newFunc;
+}
+
+_.after = function(count, func) {
+  var cnt = 0;
+  return function() {
+    if(cnt !== count){
+      cnt++;
+    }
+    if(cnt === count){
+      return func();
+    }
+  }
+}
+
+_.before = function(count, func) {
+  var cnt = 0;
+  var newFunc = function() {
+    if(cnt !== count){
+      newFunc.result = func();
+      cnt++;
+    }
+    if(cnt === count){
+      return newFunc.result;
+    }
+  }
+  return newFunc;
+}
