@@ -383,6 +383,8 @@ _.map = function (list, iteratee, context) {
   return output;
 }
 
+_.collect = _.map;
+
 _.initial = function (array, n) {
   var args = Array.prototype.slice.call(arguments);
   if (args.length == 1) {
@@ -1707,13 +1709,21 @@ _.after = function(count, func) {
 _.before = function(count, func) {
   var cnt = 0;
   var newFunc = function() {
-    if(cnt !== count){
+    if(cnt < count - 1){
       newFunc.result = func();
       cnt++;
-    }
-    if(cnt === count){
       return newFunc.result;
     }
+    if(cnt >= count - 1){
+      return newFunc.result;
+    }
+  }
+  return newFunc;
+}
+
+_.wrap = function(func, wrapper) {
+  var newFunc = function() {
+    return wrapper(_.bind.apply(this,[func].concat(_.toArray(arguments))));
   }
   return newFunc;
 }
