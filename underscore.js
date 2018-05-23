@@ -1727,3 +1727,13 @@ _.wrap = function(func, wrapper) {
   }
   return newFunc;
 }
+
+_.debounce = function(func, wait, immediate){
+  var setId = window.setTimeout(func,wait);
+  var newFunc = function(){
+    newFunc.cancel = function(){ return window.clearTimeout(setId);};
+    newFunc.cancel();
+    setId = window.setTimeout(func,wait);
+  }
+  return newFunc;
+}
