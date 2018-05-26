@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Underscore Test Suite</title>
+</head>
+
+<body>
+  <button id="thisButton"> Click here</button>
+  <div id="curDiv"></div>
+  <script src="../../underscore.js"></script>
+  <script>
+   
+    var debouncedFunc = _.debounce(function () {
+      var div = document.createElement('div');
+      div.innerHTML = "yoman";
+      document.getElementById("curDiv").appendChild(div);
+    }, 1000, false);
+    document.getElementById('thisButton').addEventListener("click", function () {
+      debouncedFunc();
+    });
+  </script>
+
+</body>
+
+</html>

@@ -235,9 +235,9 @@ _.isEqual = function (object, other) {
     }
 
     if (String(object) === String(other)) {
-      if(_.isObject(object) && _.isObject(other)){
-        for(const prop in object){
-          if(!other.hasOwnProperty(prop) || other[prop] !== object[prop]){
+      if (_.isObject(object) && _.isObject(other)) {
+        for (const prop in object) {
+          if (!other.hasOwnProperty(prop) || other[prop] !== object[prop]) {
             //return false;
           }
         }
@@ -249,43 +249,41 @@ _.isEqual = function (object, other) {
 }
 _.findIndex = function (array, predicate, context) {
   var found = -1;
-  if(_.isNull(array)){
+  if (_.isNull(array)) {
     return found;
   }
-    for (var i = 0; i < array.length; i++) {
-      if (_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
+  for (var i = 0; i < array.length; i++) {
+    if (_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
+      found = i;
+      break;
+    } else if (_.isString(predicate)) {
+      if (array[i].hasOwnProperty(predicate) && !!array[i][predicate]) {
         found = i;
         break;
       }
-      else if(_.isString(predicate)){
-        if(array[i].hasOwnProperty(predicate) && !!array[i][predicate]){
-          found = i;
-          break;
-        }
-      }
     }
-  
+  }
+
   return found;
 }
 
 _.findLastIndex = function (array, predicate, context) {
   var found = -1;
-  if(_.isNull(array)){
+  if (_.isNull(array)) {
     return found;
   }
-    for (var i = array.length - 1; i >= 0; i--) {
-      if(_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
+  for (var i = array.length - 1; i >= 0; i--) {
+    if (_.isFunction(predicate) && predicate.call(context, array[i], i, array)) {
+      found = i;
+      break;
+    } else if (_.isString(predicate)) {
+      if (array[i].hasOwnProperty(predicate) && !!array[i][predicate]) {
         found = i;
         break;
       }
-      else if(_.isString(predicate)){
-        if(array[i].hasOwnProperty(predicate) && !!array[i][predicate]){
-          found = i;
-          break;
-        }
-      }
     }
-  
+  }
+
   return found;
 }
 
@@ -587,16 +585,16 @@ _.indexOf = function (array, value, isSorted) {
   }
   var arr = _.toArray(array);
   var pos = -1;
-  if(isSorted === -Infinity){
+  if (isSorted === -Infinity) {
     isSorted = 0;
   }
-  if(!_.isUndefined(isSorted) && !_.isNumber(isSorted)){
+  if (!_.isUndefined(isSorted) && !_.isNumber(isSorted)) {
     isSorted = true;
   }
-  if(isSorted < 0){
+  if (isSorted < 0) {
     isSorted += arr.length;
   }
-  if(_.isBoolean(isSorted)){
+  if (_.isBoolean(isSorted)) {
     isSorted = undefined;
   }
   if (_.isArray(arr)) {
@@ -656,8 +654,7 @@ _.filter = function (list, predicate, context) {
   var output = [];
   if (_.isUndefined(list) || _.isNull(list) || _.isEmpty(list)) {
     return output;
-  } 
-  else {
+  } else {
     if (_.isArray(list)) {
       for (var i = 0; i < list.length; i++) {
         if (_.isFunction(predicate)) {
@@ -665,27 +662,26 @@ _.filter = function (list, predicate, context) {
             output.push(list[i]);
           }
         } else if (_.isString(predicate)) {
-          
-            if (list[i].hasOwnProperty(predicate)) {
+
+          if (list[i].hasOwnProperty(predicate)) {
+            output.push(list[i]);
+            break;
+          }
+        } else if (_.isObject(predicate)) {
+          if (_.isEmpty(predicate)) {
+            return list;
+          }
+          for (const prop in predicate) {
+            if (list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]) {
               output.push(list[i]);
               break;
             }
-        }
-        else if(_.isObject(predicate)){
-          if(_.isEmpty(predicate)){
-            return list;
           }
-            for(const prop in predicate){
-              if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
-                output.push(list[i]);
-                break;
-              }
-            }
         }
       }
     } else if (_.isObject(list)) {
       for (const prop in list) {
-        if (predicate.call(context,list[prop],prop)) {
+        if (predicate.call(context, list[prop], prop)) {
           output.push(list[prop]);
         }
       }
@@ -697,69 +693,67 @@ _.filter = function (list, predicate, context) {
 
 _.select = _.filter;
 
-_.where = function (list, properties){
+_.where = function (list, properties) {
   var output = [];
-  for(var i = 0; i < list.length; i++){
+  for (var i = 0; i < list.length; i++) {
     var fit = true;
-    for(const prop in properties){
-      if(!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]){
+    for (const prop in properties) {
+      if (!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]) {
         fit = false;
         break;
       }
     }
-    if(fit){
+    if (fit) {
       output.push(list[i]);
     }
   }
   return output;
 }
 
-_.findWhere = function (list, properties){
-  for(var i = 0; i < list.length; i++){
+_.findWhere = function (list, properties) {
+  for (var i = 0; i < list.length; i++) {
     var fit = true;
-    for(const prop in properties){
-      if(!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]){
+    for (const prop in properties) {
+      if (!list[i].hasOwnProperty(prop) || list[i][prop] !== properties[prop]) {
         fit = false;
-        
+
       }
     }
-    if(fit){
+    if (fit) {
       return list[i];
     }
   }
 }
 
-_.reject = function (list, predicate, context){
+_.reject = function (list, predicate, context) {
   var passed = _.filter(list, predicate, context);
   var output = [];
-  for(var i = 0; i < list.length; i++){
-    if(passed.indexOf(list[i]) === -1){
+  for (var i = 0; i < list.length; i++) {
+    if (passed.indexOf(list[i]) === -1) {
       output.push(list[i]);
     }
   }
   return output;
 }
 
-_.every = function (list, predicate, context){
+_.every = function (list, predicate, context) {
   var allTrue = true;
   list = _.toArray(list);
-  for(var i = 0; i < list.length; i++){
-    if(_.isFunction(predicate)){
-      if(!predicate.call(context ,list[i])){
+  for (var i = 0; i < list.length; i++) {
+    if (_.isFunction(predicate)) {
+      if (!predicate.call(context, list[i])) {
         allTrue = false;
         break;
       }
-    }
-    else if(_.isObject(predicate)){
-      for(const prop in predicate){
-        if(!list[i].hasOwnProperty(prop) || list[i][prop] !== predicate[prop]){
+    } else if (_.isObject(predicate)) {
+      for (const prop in predicate) {
+        if (!list[i].hasOwnProperty(prop) || list[i][prop] !== predicate[prop]) {
           allTrue = false;
           break;
         }
       }
-    }
-    else if(_.isString(predicate)){
-      if(!list[i].hasOwnProperty(predicate)){
+    } else if (_.isString(predicate)) {
+      if (!list[i].hasOwnProperty(predicate)) {
         allTrue = false;
         break;
       }
@@ -768,74 +762,68 @@ _.every = function (list, predicate, context){
   return allTrue;
 }
 
-_.pluck = function (list, propertyName){
+_.pluck = function (list, propertyName) {
   var output = [];
-  for(var i = 0; i < list.length; i++){
+  for (var i = 0; i < list.length; i++) {
     output.push(list[i][propertyName]);
   }
   return output;
 }
 
-_.max = function (list, iteratee, context){
+_.max = function (list, iteratee, context) {
   var output = -Infinity;
-  if(_.isEmpty(list) || _.isUndefined(list)){
+  if (_.isEmpty(list) || _.isUndefined(list)) {
     return output;
   }
   list = _.toArray(list);
-  for(var i = 0; i < list.length; i++){
+  for (var i = 0; i < list.length; i++) {
     var cur;
-    if(!_.isUndefined(iteratee) && _.isFunction(iteratee)){
-      cur = iteratee.call(context,list[i]);
-      if(cur >= output){
+    if (!_.isUndefined(iteratee) && _.isFunction(iteratee)) {
+      cur = iteratee.call(context, list[i]);
+      if (cur >= output) {
         output = list[i];
       }
-    }
-    else if(_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))){
-      if(output === -Infinity){
+    } else if (_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))) {
+      if (output === -Infinity) {
         output = list[i];
-      }
-      else{
-        if(list[i][iteratee] > output[iteratee]){
+      } else {
+        if (list[i][iteratee] > output[iteratee]) {
           output = list[i];
         }
       }
+    } else {
+      if (list[i] >= output) {
+        output = list[i];
+      }
     }
-   else{
-     if(list[i] >= output){
-       output = list[i];
-     }
-   }
   }
   return output;
 }
 
-_.min = function (list, iteratee, context){
+_.min = function (list, iteratee, context) {
   var output = Infinity;
-  if(_.isEmpty(list)){
+  if (_.isEmpty(list)) {
     return output;
   }
   list = _.toArray(list);
-  for(var i = 0; i < list.length; i++){
+  for (var i = 0; i < list.length; i++) {
     var cur;
-    if(!_.isUndefined(iteratee) && _.isFunction(iteratee)){
-      cur = iteratee.call(context,list[i]);
-      if(cur <= output && !_.isNull(cur)){
+    if (!_.isUndefined(iteratee) && _.isFunction(iteratee)) {
+      cur = iteratee.call(context, list[i]);
+      if (cur <= output && !_.isNull(cur)) {
         output = list[i];
       }
-    }
-    else if(_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))){
+    } else if (_.isObject(list[i]) && (_.isString(iteratee) || _.isNumber(iteratee))) {
       cur = list[i][iteratee];
-      if(output === Infinity){
+      if (output === Infinity) {
         output = list[i];
-      }
-      else{
-        if(cur <= output[iteratee]){
+      } else {
+        if (cur <= output[iteratee]) {
           output = list[i];
         }
-      } 
-    }
-    else{
-      if(list[i] <= output && !_.isNull(list[i])){
+      }
+    } else {
+      if (list[i] <= output && !_.isNull(list[i])) {
         output = list[i];
       }
     }
@@ -843,43 +831,40 @@ _.min = function (list, iteratee, context){
   return output;
 }
 
-_.range = function (start, stop, step){
+_.range = function (start, stop, step) {
   var args = Array.prototype.slice.call(arguments);
-  if(args.length === 3){
+  if (args.length === 3) {
     start = args[0];
     stop = args[1];
     step = args[2];
-  }
-  else if(args.length === 2){
+  } else if (args.length === 2) {
     start = args[0];
     stop = args[1];
     step = (start > stop ? -1 : 1);
-  }
-  else{
+  } else {
     start = 0;
     stop = args[0];
     step = (start > stop ? -1 : 1);
   }
   var output = [];
-  if(stop <= start && step > 0){
+  if (stop <= start && step > 0) {
     return output;
   }
-  if(stop < start){
-    for(var i = start; i > stop; i += step){
+  if (stop < start) {
+    for (var i = start; i > stop; i += step) {
       output.push(i);
     }
-  }
-  else{
-    for(var i = start; i < stop; i += step){
+  } else {
+    for (var i = start; i < stop; i += step) {
       output.push(i);
     }
   }
   return output;
 }
 
-_.shuffle = function (list){
+_.shuffle = function (list) {
   list = _.toArray(list);
-  for(var i = list.length - 1; i >= 0; i--){
+  for (var i = list.length - 1; i >= 0; i--) {
     var posIndex = Math.floor(Math.random() * Math.floor(i));
     var posVal = list[posIndex];
     var toPos = i;
@@ -890,17 +875,15 @@ _.shuffle = function (list){
   return list;
 }
 
-_.sortBy = function (list, iteratee, context){
+_.sortBy = function (list, iteratee, context) {
   list = _.toArray(list);
-  var output = list.sort(function( a, b){
-    if(_.isFunction(iteratee)){
-      return iteratee.call(context,a) - iteratee.call(context, b);
-    }
-    else if(_.isString(iteratee)){
-      if(iteratee === 'length'){
+  var output = list.sort(function (a, b) {
+    if (_.isFunction(iteratee)) {
+      return iteratee.call(context, a) - iteratee.call(context, b);
+    } else if (_.isString(iteratee)) {
+      if (iteratee === 'length') {
         return a.length - b.length;
-      }
-      else{
+      } else {
         return list[a][iteratee] - list[b][iteratee];
       }
     }
@@ -908,220 +891,207 @@ _.sortBy = function (list, iteratee, context){
   return output;
 }
 
-_.object = function (list, values){
-  if(arguments.length !== 1){
+_.object = function (list, values) {
+  if (arguments.length !== 1) {
     values = _.toArray(values);
   }
   list = _.toArray(list);
   var output = new Object();
-  for(var i = 0; i < list.length; i++){
-    if(!_.isUndefined(values)){
+  for (var i = 0; i < list.length; i++) {
+    if (!_.isUndefined(values)) {
       output.list[i] = values[i];
-    }
-    else{
+    } else {
       output.list[i][0] = list[i][1];
     }
   }
   return output;
 }
 
-_.size = function(list){
-  if(_.isNull(list) || _.isUndefined(list)){
+_.size = function (list) {
+  if (_.isNull(list) || _.isUndefined(list)) {
     return 0;
   }
-  if(list.hasOwnProperty(length)){
+  if (list.hasOwnProperty(length)) {
     return list.length;
   }
   list = _.toArray(list);
   return list.length;
 }
 
-_.sample = function(list, n){
-  if(arguments.length === 1){
+_.sample = function (list, n) {
+  if (arguments.length === 1) {
     n = 1;
   }
   var index;
   var output = [];
   var dup = [];
   list = _.toArray(list);
-  for(var i = 0; i < list.length; i++){
+  for (var i = 0; i < list.length; i++) {
     dup.push(list[i]);
   }
-  if(n === 1){
-     index = Math.floor(Math.random() * Math.floor(list.length))
-     return list[index];
+  if (n === 1) {
+    index = Math.floor(Math.random() * Math.floor(list.length))
+    return list[index];
   }
-  if(n > list.length){
+  if (n > list.length) {
     n = list.length;
   }
-  for(var i = 0; i < n; i++){
+  for (var i = 0; i < n; i++) {
     index = Math.floor(Math.random() * Math.floor(dup.length))
     output.push(dup[index]);
-    dup.splice(index,1);
+    dup.splice(index, 1);
   }
   return output;
 }
 
-_.find = function(list, predicate, context){
+_.find = function (list, predicate, context) {
   list = _.toArray(list);
   var output = undefined;
-  for(var i = 0; i < list.length; i++){
-    if(_.isFunction(predicate) && predicate.call(context,list[i])){
+  for (var i = 0; i < list.length; i++) {
+    if (_.isFunction(predicate) && predicate.call(context, list[i])) {
       output = list[i];
       return output;
-    }
-    else if(_.isObject(predicate)){
-      for(const prop in predicate){
-        if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
+    } else if (_.isObject(predicate)) {
+      for (const prop in predicate) {
+        if (list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]) {
           output = list[i];
-        }
-        else{
+        } else {
           output = undefined;
           break;
         }
       }
-      if(!_.isUndefined(output)){
+      if (!_.isUndefined(output)) {
         return output;
       }
     }
   }
 }
 
-_.findKey = function(object, predicate, context){
+_.findKey = function (object, predicate, context) {
   var found = undefined;
-  if(_.isNull(object)){
+  if (_.isNull(object)) {
     return found;
   }
-  for(const prop in object){
-    if(_.isFunction(predicate) && predicate.call(context,object[prop],prop,object)){
+  for (const prop in object) {
+    if (_.isFunction(predicate) && predicate.call(context, object[prop], prop, object)) {
+      found = prop;
+      break;
+    } else if (_.isString(predicate) && object.hasOwnProperty(predicate) && !!object[prop][predicate]) {
       found = prop;
       break;
     }
-   else if(_.isString(predicate) && object.hasOwnProperty(predicate) && !!object[prop][predicate]){
-     found = prop;
-     break;
-   }
   }
   return found;
 }
 
-_.partition = function(list, predicate,context){
-  if(!_.isObject(list)){
+_.partition = function (list, predicate, context) {
+  if (!_.isObject(list)) {
     list = _.toArray(list);
   }
   var pass = [];
   var notPass = [];
   var output = [];
-  if(_.isObject(list)){
-    for(const prop in list){
-      if(_.isFunction(predicate)){
-        if(predicate.call(context,list[prop], prop, list)){
+  if (_.isObject(list)) {
+    for (const prop in list) {
+      if (_.isFunction(predicate)) {
+        if (predicate.call(context, list[prop], prop, list)) {
           pass.push(list[prop]);
-        }
-        else{
+        } else {
           notPass.push(list[prop]);
         }
       }
     }
-  }
-  else{
-    for(var i = 0; i < list.length; i++){
-      if(_.isFunction(predicate)){
-        if(predicate.call(context,list[i],i,list)){
+  } else {
+    for (var i = 0; i < list.length; i++) {
+      if (_.isFunction(predicate)) {
+        if (predicate.call(context, list[i], i, list)) {
           pass.push(list[i]);
-        }
-        else{
+        } else {
           notPass.push(list[i]);
         }
-      }
-      else if(_.isUndefined(predicate)){
-        if(!!list[i]){
+      } else if (_.isUndefined(predicate)) {
+        if (!!list[i]) {
           pass.push(list[i]);
-        }
-        else{
+        } else {
           notPass.push(list[i]);
         }
-      }
-      else if(_.isString(predicate)){
-        if(!!list[i][predicate]){
+      } else if (_.isString(predicate)) {
+        if (!!list[i][predicate]) {
           pass.push(list[i]);
-        }
-        else{
+        } else {
           notPass.push(list[i]);
         }
-      }
-      else if(_.isObject(predicate)){
-        for(const prop in predicate){
-          if(list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]){
+      } else if (_.isObject(predicate)) {
+        for (const prop in predicate) {
+          if (list[i].hasOwnProperty(prop) && list[i][prop] === predicate[prop]) {
             pass.push(list[i]);
-          }
-          else{
+          } else {
             notPass.push(list[i]);
           }
         }
       }
     }
- 
+
   }
-    
+
   output.push(pass);
   output.push(notPass);
   return output;
 }
 
-_.first = function(list, n){
-  if(_.isNull(list) || _.isEmpty(list)){
+_.first = function (list, n) {
+  if (_.isNull(list) || _.isEmpty(list)) {
     return undefined;
   }
-  if(arguments.length === 1){
+  if (arguments.length === 1) {
     return list[0];
   }
   list = _.toArray(list);
-  var output = list.splice(0,n);
+  var output = list.splice(0, n);
   return output;
 }
 
 _.head = _.first;
 _.take = _.first;
 
-_.initial = function(list,n){
-  if(_.isNull(list) || _.isEmpty(list)){
+_.initial = function (list, n) {
+  if (_.isNull(list) || _.isEmpty(list)) {
     return undefined;
   }
   list = _.toArray(list);
   var output = [];
-  if(arguments.length === 1){
-    output = list.splice(0,list.length - 1);
+  if (arguments.length === 1) {
+    output = list.splice(0, list.length - 1);
     return output;
   }
   output = list.splice(0, list.length - n);
   return output;
 }
 
-_.last = function(list, n){
-  if(_.isNull(list) || _.isEmpty(list)){
+_.last = function (list, n) {
+  if (_.isNull(list) || _.isEmpty(list)) {
     return undefined;
   }
   list = _.toArray(list);
   var output;
-  if(arguments.length === 1){
+  if (arguments.length === 1) {
     output = list[list.length - 1];
     return output;
   }
-  if(n > list.length){
+  if (n > list.length) {
     return list;
   }
   output = list.splice(list.length - n);
   return output;
 }
 
-_.rest = function(list, index){
-  if(_.isNull(list) || _.isEmpty(list)){
+_.rest = function (list, index) {
+  if (_.isNull(list) || _.isEmpty(list)) {
     return undefined;
   }
   list = _.toArray(list);
   var output;
-  if(arguments.length === 1){
+  if (arguments.length === 1) {
     output = list.splice(1, list.length - 1);
     return output;
   }
@@ -1129,50 +1099,49 @@ _.rest = function(list, index){
   return output;
 }
 
-_.compact = function(list){
+_.compact = function (list) {
   var output = [];
-  for(var i = 0; i < list.length; i++){
-    if(!!list[i]){
+  for (var i = 0; i < list.length; i++) {
+    if (!!list[i]) {
       output.push(list[i]);
     }
   }
   return output;
 }
 
-_.without = function (list, values){
+_.without = function (list, values) {
   var output = [];
   var valueList = [];
-  for(var i = 1; i < arguments.length; i++){
+  for (var i = 1; i < arguments.length; i++) {
     valueList.push(arguments[i]);
   }
-  for(var i = 0; i < list.length; i++){
-    if(valueList.indexOf(list[i]) === -1){
+  for (var i = 0; i < list.length; i++) {
+    if (valueList.indexOf(list[i]) === -1) {
       output.push(list[i]);
     }
   }
   return output;
 }
 
-_.zip = function (arrays){
-  
+_.zip = function (arrays) {
+
   var output = [];
-  if(_.isNull(arrays) || _.isUndefined(arrays) || _.isEmpty(arrays)){
+  if (_.isNull(arrays) || _.isUndefined(arrays) || _.isEmpty(arrays)) {
     return output;
   }
   var arr = Array.prototype.slice.call(arguments);
   var maxLength = 0;
-  for(var i = 0; i < arr.length; i++){
-    if(arr[i].length > maxLength){
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].length > maxLength) {
       maxLength = arr[i].length;
     }
   }
-  for(var i = 0; i < maxLength; i++){
+  for (var i = 0; i < maxLength; i++) {
     var cur = [];
-    for(var j = 0; j < arr.length; j++){
-      if(_.isUndefined(arr[j][i])){
+    for (var j = 0; j < arr.length; j++) {
+      if (_.isUndefined(arr[j][i])) {
         cur.push(undefined);
-      }
-      else{
+      } else {
         cur.push(arr[j][i]);
       }
     }
@@ -1181,18 +1150,17 @@ _.zip = function (arrays){
   return output;
 }
 
-_.unzip = function (array){
+_.unzip = function (array) {
   var output = [];
-  if(_.isNull(array) || _.isUndefined(array) || _.isEmpty(array)){
+  if (_.isNull(array) || _.isUndefined(array) || _.isEmpty(array)) {
     return output;
   }
-  for(var i = 0; i < array[0].length; i++){
+  for (var i = 0; i < array[0].length; i++) {
     var cur = [];
-    for(var j = 0; j < array.length; j++){
-      if(_.isUndefined(array[j][i])){
+    for (var j = 0; j < array.length; j++) {
+      if (_.isUndefined(array[j][i])) {
         cur.push(undefined);
-      }
-      else{
+      } else {
         cur.push(array[j][i]);
       }
     }
@@ -1201,74 +1169,72 @@ _.unzip = function (array){
   return output;
 }
 
-_.chunk = function (array,length){
+_.chunk = function (array, length) {
   var output = [];
-  if(_.isNull(array) || _.isUndefined(array) || _.isEmpty(array) || _.isUndefined(length) || length === -1 || length === 0){
+  if (_.isNull(array) || _.isUndefined(array) || _.isEmpty(array) || _.isUndefined(length) || length === -1 || length === 0) {
     return output;
   }
-  while(!_.isEmpty(array)){
+  while (!_.isEmpty(array)) {
     var cur = array.splice(0, length);
     output.push(cur);
   }
   return output;
 }
 
-_.keys = function(object){
-  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+_.keys = function (object) {
+  if (_.isNull(object) || _.isUndefined(object) || _.isString(object)) {
     return [];
   }
   var output = Object.keys(object);
   return output;
 }
 
-_.allKeys = function(object){
-  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+_.allKeys = function (object) {
+  if (_.isNull(object) || _.isUndefined(object) || _.isString(object)) {
     return [];
   }
   var output = [];
-  for(const prop in object){
+  for (const prop in object) {
     output.push(prop);
   }
   return output;
 }
 
-_.values = function(object){
-  if(_.isNull(object) || _.isUndefined(object) || _.isString(object)){
+_.values = function (object) {
+  if (_.isNull(object) || _.isUndefined(object) || _.isString(object)) {
     return [];
   }
   var output = [];
-  for(const prop in object){
+  for (const prop in object) {
     output.push(object[prop]);
   }
   return output;
 }
 
-_.mapObject = function(object, iteratee, context){
+_.mapObject = function (object, iteratee, context) {
   var output = new Object();
-  if(!_.isArray(object)){
-    for(const prop in object){
-      if(_.isObject(object[prop])){
-        output = _.mapObject.call(context,object[prop], iteratee);
+  if (!_.isArray(object)) {
+    for (const prop in object) {
+      if (_.isObject(object[prop])) {
+        output = _.mapObject.call(context, object[prop], iteratee);
+      } else {
+        output[prop] = iteratee.call(context, object[prop], prop, object);
       }
-      else{
-        output[prop] = iteratee.call(context, object[prop],prop,object);
-      }
-      
+
     }
+  } else {
+
+    for (var i = 0; i < object.length; i++) {
+      output[i] = iteratee.call(context, object[i], i, object);
+    }
+
   }
- else{
-   
-   for(var i = 0; i < object.length; i++){
-     output[i] = iteratee.call(context, object[i],i,object);
-   }
-  
- }
- return output;
+  return output;
 }
 
-_.pairs = function (object){
+_.pairs = function (object) {
   var output = [];
-  for(const prop in object){
+  for (const prop in object) {
     var cur = [];
     cur.push(prop);
     cur.push(object[prop]);
@@ -1277,34 +1243,33 @@ _.pairs = function (object){
   return output;
 }
 
-_.invert = function (object){
+_.invert = function (object) {
   var output = new Object();
-  for(const prop in object){
+  for (const prop in object) {
     output[object[prop]] = prop;
   }
   return output;
 }
 
-_.create = function(prototype, props){
-  if(!_.isObject(prototype)){
-    if(!_.isArray(prototype)){
+_.create = function (prototype, props) {
+  if (!_.isObject(prototype)) {
+    if (!_.isArray(prototype)) {
       return {};
-    }
-    else{
+    } else {
       return new Array();
     }
   }
   var output = Object.create(prototype);
-  for(const prop in props){
+  for (const prop in props) {
     output[prop] = props[prop];
   }
   return output;
 }
 
-_.functions = function(object){
+_.functions = function (object) {
   var output = [];
-  for(const prop in object){
-    if(_.isFunction(object[prop])){
+  for (const prop in object) {
+    if (_.isFunction(object[prop])) {
       output.push(prop);
     }
   }
@@ -1312,149 +1277,143 @@ _.functions = function(object){
   return output;
 }
 
-_.findKey = function (object, iteratee, context){
-  for(const prop in object){
-    if(_.isFunction(iteratee) && iteratee.call(context, object[prop],prop, object)){
+_.findKey = function (object, iteratee, context) {
+  for (const prop in object) {
+    if (_.isFunction(iteratee) && iteratee.call(context, object[prop], prop, object)) {
       return prop;
-    }
-    else if(_.isString(iteratee) && !!object[prop][iteratee]){
+    } else if (_.isString(iteratee) && !!object[prop][iteratee]) {
       return prop;
     }
   }
 }
 
-_.extend = function(destination, sources){
+_.extend = function (destination, sources) {
   sources = Array.prototype.slice.call(arguments);
-  sources.splice(0,1);
-  if(_.isNull(destination) || _.isUndefined(destination)){
+  sources.splice(0, 1);
+  if (_.isNull(destination) || _.isUndefined(destination)) {
     return destination;
   }
-  for(var i = 0; i < sources.length; i++){
-      for(const prop in sources[i]){
+  for (var i = 0; i < sources.length; i++) {
+    for (const prop in sources[i]) {
+      destination[prop] = sources[i][prop];
+    }
+  }
+  return destination;
+}
+
+_.extendOwn = function (destination, sources) {
+  sources = Array.prototype.slice.call(arguments);
+  sources.splice(0, 1);
+  if (_.isNull(destination) || _.isUndefined(destination)) {
+    return destination;
+  }
+  for (var i = 0; i < sources.length; i++) {
+    for (const prop in sources[i]) {
+      if (sources[i].hasOwnProperty(prop)) {
         destination[prop] = sources[i][prop];
       }
-  } 
-   return destination;
-}
 
-_.extendOwn = function (destination, sources){
-  sources = Array.prototype.slice.call(arguments);
-  sources.splice(0,1);
-  if(_.isNull(destination) || _.isUndefined(destination)){
-    return destination;
+    }
   }
-  for(var i = 0; i < sources.length; i++){
-      for(const prop in sources[i]){
-        if(sources[i].hasOwnProperty(prop)){
-          destination[prop] = sources[i][prop];
-        }
-       
-      }
-  } 
-   return destination;
+  return destination;
 }
 
 _.assign = _.extendOwn;
 
 /*Not finished*/
-_.pick = function(object, keys){
+_.pick = function (object, keys) {
   var args = Array.prototype.slice.call(arguments);
-  args.splice(0,1);
+  args.splice(0, 1);
   var output = new Object();
-  if(_.isObject(object) || _.isArray(object)){
-    if(_.isFunction(keys)){
-      for(const prop in object){
-        if(keys(prop, object[prop],object)){
+  if (_.isObject(object) || _.isArray(object)) {
+    if (_.isFunction(keys)) {
+      for (const prop in object) {
+        if (keys(prop, object[prop], object)) {
           output[prop] = object[prop];
         }
       }
-    }
-    else if(_.isNumber(args[0])){
-      for(var i = 0; i < args.length; i++){
-        if(args[i] < object.length){
+    } else if (_.isNumber(args[0])) {
+      for (var i = 0; i < args.length; i++) {
+        if (args[i] < object.length) {
           output[args[i]] = object[args[i]];
         }
       }
-    }
-    else{
-      for(const prop in object){
-        for(var i = 0; i < args.length; i++){
-          if(args[i].indexOf(prop) !== -1){
+    } else {
+      for (const prop in object) {
+        for (var i = 0; i < args.length; i++) {
+          if (args[i].indexOf(prop) !== -1) {
             output[prop] = object[prop];
             break;
           }
-        } 
+        }
       }
     }
-  }
-  else if(_.isUndefined(object) || _.isNull(object)){
+  } else if (_.isUndefined(object) || _.isNull(object)) {
     return output;
-  }
-  else{
+  } else {
     var type = Object.prototype.toString.call(object);
     type = type.slice(8);
-    type = type.slice(0,-1);
+    type = type.slice(0, -1);
     var oriType = new window[type];
-    for(var i = 0; i < args.length; i++){
-      if(args[i] in oriType){
+    for (var i = 0; i < args.length; i++) {
+      if (args[i] in oriType) {
         output[args[i]] = oriType[args[i]];
       }
-      
+
     }
   }
   return output;
 }
 
-_.defaults = function (object, defaults){
+_.defaults = function (object, defaults) {
   var args = Array.prototype.slice.call(arguments);
-  args.splice(0,1);
-  if(_.isUndefined(object) || _.isNull(object)){
+  args.splice(0, 1);
+  if (_.isUndefined(object) || _.isNull(object)) {
     object = new Object();
   }
-  for(var i = 0; i < args.length; i++){
-    for(const prop in args[i]){
-      if(!object.hasOwnProperty(prop)){
+  for (var i = 0; i < args.length; i++) {
+    for (const prop in args[i]) {
+      if (!object.hasOwnProperty(prop)) {
         object[prop] = args[i][prop];
       }
     }
   }
-  
+
   return object;
 }
 
-_.has = function(object, key){
+_.has = function (object, key) {
   var args = key;
   var output = false;
-  if(_.isUndefined(object) || _.isNull(object)){
+  if (_.isUndefined(object) || _.isNull(object)) {
     return output;
   }
-  if(_.isArray(args)){
-    for(var i = 0; i < args.length; i++){
-      if(Object.prototype.hasOwnProperty.call(object,args[i])){
-        output = true; 
-        if(_.isObject(object[args[i]])){
-          output = _.has(object[args[i]],args);
+  if (_.isArray(args)) {
+    for (var i = 0; i < args.length; i++) {
+      if (Object.prototype.hasOwnProperty.call(object, args[i])) {
+        output = true;
+        if (_.isObject(object[args[i]])) {
+          output = _.has(object[args[i]], args);
         }
       }
     }
-  }
-  else{
-    if(Object.prototype.hasOwnProperty.call(object,args)){
-      output = true; 
+  } else {
+    if (Object.prototype.hasOwnProperty.call(object, args)) {
+      output = true;
     }
   }
   return output;
 }
 
-_.isSymbol = function(object){
-  if(typeof object !== "object"){
+_.isSymbol = function (object) {
+  if (typeof object !== "object") {
     return typeof object === "symbol";
   }
   return object.constructor === Symbol;
 }
 
-_.isMap = function(object){
-  if(typeof object !== "object"){
+_.isMap = function (object) {
+  if (typeof object !== "object") {
     return Object.prototype.toString.call(object) === "[object map]";
   }
   return object.constructor === Map;
@@ -1465,56 +1424,52 @@ _.property = function (path) {
     if (_.isUndefined(object) || _.isNull(object) || _.isEmpty(path)) {
       return undefined;
     }
-      if (_.isArray(path)) {
-        var cur = object;
-        for (var i = 0; i < path.length; i++){
-          if (!_.isUndefined(cur) && !_.isNull(cur)) {
-            cur = cur[path[i]];
-          }
-          else {
-            return undefined;
-          }
+    if (_.isArray(path)) {
+      var cur = object;
+      for (var i = 0; i < path.length; i++) {
+        if (!_.isUndefined(cur) && !_.isNull(cur)) {
+          cur = cur[path[i]];
+        } else {
+          return undefined;
         }
-        return cur;
       }
-      else {
-        return object[path];
-      }
+      return cur;
+    } else {
+      return object[path];
+    }
   }
 }
 
 _.propertyOf = function (object) {
   return function (path) {
-    if(_.isUndefined(object) || _.isNull(object) || _.isEmpty(path)){
+    if (_.isUndefined(object) || _.isNull(object) || _.isEmpty(path)) {
       return undefined;
     }
-    if(_.isArray(path)){
+    if (_.isArray(path)) {
       var cur = object;
-      for(var i = 0; i < path.length; i++){
-          if (!_.isUndefined(cur) && !_.isNull(cur)) {
-            cur = cur[path[i]];
-          }
-          else {
-            return undefined;
-          }
+      for (var i = 0; i < path.length; i++) {
+        if (!_.isUndefined(cur) && !_.isNull(cur)) {
+          cur = cur[path[i]];
+        } else {
+          return undefined;
+        }
       }
       return cur;
-    }
-    else{
+    } else {
       return object[path];
     }
   }
 }
 
 _.isWeakMap = function (object) {
-  if(typeof object !== "object"){
+  if (typeof object !== "object") {
     return Object.prototype.toString.call(object) === "[object map]";
   }
   return object.constructor === WeakMap;
 }
 
 _.isSet = function (object) {
-  if(typeof object !== "object"){
+  if (typeof object !== "object") {
     return Object.prototype.toString.call(object) === "[object set]";
   }
   return object.constructor === Set;
@@ -1524,8 +1479,8 @@ _.noop = function () {
   return undefined;
 }
 
-_.random = function (min,max) {
-  if(arguments.length !== 2){
+_.random = function (min, max) {
+  if (arguments.length !== 2) {
     max = min;
     min = 0
   }
@@ -1535,8 +1490,9 @@ _.random = function (min,max) {
 }
 
 _.uniqueId = function (prefix) {
-  var output = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+  var output = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0,
+      v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
   if (!_.isUndefined(prefix)) {
@@ -1556,26 +1512,26 @@ _.escape = function (string) {
     return "";
   }
   // List of HTML entities for escaping.
-var htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#x27;',
-  '/': '&#x2F;'
-};
+  var htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;'
+  };
 
-// Regex containing the keys listed immediately above.
-var htmlEscaper = /[&<>"'\/]/g;
-// Escape a string for HTML interpolation.
-  return string.replace(htmlEscaper, function(match) {
+  // Regex containing the keys listed immediately above.
+  var htmlEscaper = /[&<>"'\/]/g;
+  // Escape a string for HTML interpolation.
+  return string.replace(htmlEscaper, function (match) {
     return htmlEscapes[match];
   });
 }
 
-_.result = function (object, property, defaultValue){
-  if(_.isUndefined(object) || _.isNull(object)){
-    if(_.isFunction(defaultValue)){
+_.result = function (object, property, defaultValue) {
+  if (_.isUndefined(object) || _.isNull(object)) {
+    if (_.isFunction(defaultValue)) {
       return defaultValue.call(object);
     }
     return defaultValue;
@@ -1585,16 +1541,16 @@ _.result = function (object, property, defaultValue){
   var parent;
   var symbolKeys = Object.getOwnPropertySymbols(object);
   //For not nested object
-  if(!_.isArray(property)){
-    for(const prop in object){
-      if(prop === property){
+  if (!_.isArray(property)) {
+    for (const prop in object) {
+      if (prop === property) {
         hasIt = true;
         break;
       }
     }
-    if(symbolKeys.length !== 0){
-      for(var i = 0; i < symbolKeys.length; i++){
-        if(symbolKeys[i] === property){
+    if (symbolKeys.length !== 0) {
+      for (var i = 0; i < symbolKeys.length; i++) {
+        if (symbolKeys[i] === property) {
           hasIt = true;
           break;
         }
@@ -1602,74 +1558,67 @@ _.result = function (object, property, defaultValue){
     }
   }
   //For nested object
-  else{
+  else {
     var cur = object;
-    for(var i = 0; i < property.length; i++){
-      if(cur.hasOwnProperty(property[i]) && !_.isUndefined(cur[property[i]])){
-        if(_.isFunction(cur[property[i]]) && i !== property.length){
+    for (var i = 0; i < property.length; i++) {
+      if (cur.hasOwnProperty(property[i]) && !_.isUndefined(cur[property[i]])) {
+        if (_.isFunction(cur[property[i]]) && i !== property.length) {
           parent = cur;
           cur = cur[property[i]].call(parent);
-        }
-        else{
+        } else {
           parent = cur;
           cur = cur[property[i]];
         }
         hasIt = true;
       }
     }
-    
+
   }
-  if(!hasIt || (!_.isArray(property) && _.isUndefined(object[property]))){
-    if(_.isFunction(defaultValue)){
+  if (!hasIt || (!_.isArray(property) && _.isUndefined(object[property]))) {
+    if (_.isFunction(defaultValue)) {
       return defaultValue.call(object);
     }
     return defaultValue;
-  }
-  else{
-    if(!_.isArray(property) && _.isFunction(object[property])){
+  } else {
+    if (!_.isArray(property) && _.isFunction(object[property])) {
       return object[property].call(object);
-    }
-    else if(cur){
-      if(_.isFunction(cur)){
-        return cur.call(parent );
+    } else if (cur) {
+      if (_.isFunction(cur)) {
+        return cur.call(parent);
       }
       return cur;
-    }
-    else{
+    } else {
       return object[property];
     }
   }
 }
 
 //Not finished
-_.bind = function(func, object, args) {
+_.bind = function (func, object, args) {
   var arg = _.toArray(arguments).slice(2);
-  return function (){
+  return function () {
     var cur = _.partial.apply(_, [func].concat(arg));
     return cur.apply(object, arguments);
   }
 }
 
-_.memoize = function(func,hashFunc){
+_.memoize = function (func, hashFunc) {
   var cache = {};
-  var newFunc = function(){
+  var newFunc = function () {
     cache = newFunc.cache;
     var firstArg = arguments[0];
-    var curKey = _.isUndefined(hashFunc) ? undefined : hashFunc.apply(this,arguments);
-    if(cache.hasOwnProperty(firstArg)){
+    var curKey = _.isUndefined(hashFunc) ? undefined : hashFunc.apply(this, arguments);
+    if (cache.hasOwnProperty(firstArg)) {
       return cache[firstArg];
-    }
-    else if(cache.hasOwnProperty(curKey)){
+    } else if (cache.hasOwnProperty(curKey)) {
       return cache[curKey];
-    }
-    else{
-      if(_.isUndefined(hashFunc)){
-        cache[firstArg] = func.apply(this,arguments);
+    } else {
+      if (_.isUndefined(hashFunc)) {
+        cache[firstArg] = func.apply(this, arguments);
         return cache[firstArg];
-      }
-      else{
-        var key = hashFunc.apply(this,arguments);
-        cache[key] = func.apply(this,arguments);
+      } else {
+        var key = hashFunc.apply(this, arguments);
+        cache[key] = func.apply(this, arguments);
         return cache[key];
       }
     }
@@ -1678,62 +1627,83 @@ _.memoize = function(func,hashFunc){
   return newFunc;
 }
 
-_.delay = function(func, wait, argument){
+_.delay = function (func, wait, argument) {
   return setTimeout.apply(window, arguments);
 }
 
-_.once = function(func) {
+_.once = function (func) {
   var executed = false;
-  var newFunc = function(){
-      if(!executed){
-        executed = true;
-        newFunc.result = func();
-      }
-      return newFunc.result;
+  var newFunc = function () {
+    if (!executed) {
+      executed = true;
+      newFunc.result = func();
+    }
+    return newFunc.result;
   }
   return newFunc;
 }
 
-_.after = function(count, func) {
+_.after = function (count, func) {
   var cnt = 0;
-  return function() {
-    if(cnt !== count){
+  return function () {
+    if (cnt !== count) {
       cnt++;
     }
-    if(cnt === count){
+    if (cnt === count) {
       return func();
     }
   }
 }
 
-_.before = function(count, func) {
+_.before = function (count, func) {
   var cnt = 0;
-  var newFunc = function() {
-    if(cnt < count - 1){
+  var newFunc = function () {
+    if (cnt < count - 1) {
       newFunc.result = func();
       cnt++;
       return newFunc.result;
     }
-    if(cnt >= count - 1){
+    if (cnt >= count - 1) {
       return newFunc.result;
     }
   }
   return newFunc;
 }
 
-_.wrap = function(func, wrapper) {
-  var newFunc = function() {
-    return wrapper(_.bind.apply(this,[func].concat(_.toArray(arguments))));
+_.wrap = function (func, wrapper) {
+  var newFunc = function () {
+    return wrapper(_.bind.apply(this, [func].concat(_.toArray(arguments))));
   }
   return newFunc;
 }
 
-_.debounce = function(func, wait, immediate){
-  var setId = window.setTimeout(func,wait);
-  var newFunc = function(){
-    newFunc.cancel = function(){ return window.clearTimeout(setId);};
-    newFunc.cancel();
-    setId = window.setTimeout(func,wait);
+_.debounce = function (func, wait, immediate) {
+  if (!immediate) {
+    var setId = window.setTimeout(func, wait);
+    var newFunc = function () {
+      newFunc.cancel = function () {
+        return window.clearTimeout(setId);
+      };
+      newFunc.cancel();
+      setId = window.setTimeout(func, wait);
+    }
+    return newFunc;
+  } else {
+    var stillWaiting = false;
+    var setid;
+    var newFunc = function () {
+      if (!stillWaiting) {
+        func.apply(arguments);
+        stillWaiting = true;
+        setid = window.setTimeout(function(){ stillWaiting = false;}, wait);
+      } else {
+        newFunc.cancel = function () {
+          return window.clearTimeout(setid);
+        }
+        newFunc.cancel();
+        setid = window.setTimeout(function(){ stillWaiting = false;}, wait);
+      }
+    }
+    return newFunc;
   }
-  return newFunc;
 }
