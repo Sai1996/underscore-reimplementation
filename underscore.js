@@ -29,7 +29,7 @@ _.reduceRight = function (list, iteratee, memo, context) {
 }
 
 _.invoke = function (list, methodName, arg) {
-  var arr = Array.prototype.slice.call(arguments);
+  var arr = _.toArray(arguments);
   arr.splice(0, 2);
   for (var i = 0; i < list.length; i++) {
     if (list[i][methodName] === null) {
@@ -90,7 +90,7 @@ _.isUndefined = function (object) {
 }
 
 _.isNaN = function (object) {
-  if ((typeof object == "number" || typeof object == "object") && isNaN(object)) {
+  if ((typeof object === "number" || typeof object == "object") && isNaN(object)) {
     return true;
   }
   return false;
@@ -113,14 +113,19 @@ _.isError = function (object) {
 }
 
 _.isObject = function (object) {
-  if (Object.prototype.toString.call(object) === "[object Object]" && object != null) {
-    return true;
+  if ((typeof object === "object" && object !== null) || typeof object === "function") {
+    while (Object.getPrototypeOf(object) !== null) {
+      if (Object.prototype.toString.call(Object.getPrototypeOf(object)) === "[object Object]") {
+        return true;
+      }
+      object = Object.getPrototypeOf(object);
+    }
   }
   return false;
 }
 
 _.isEmpty = function (object) {
-  if (Object.prototype.toString.call(object) === "[object String]" || Object.prototype.toString.call(object) === "[object Array]") {
+  if (_.isString(object) || _.isArray(object)) {
     return object.length === 0;
   } else {
     var hasNoProp = true;
@@ -165,32 +170,32 @@ _.isArguments = function (object) {
   return Object.prototype.toString.call(object) === "[object Arguments]";
 }
 _.isFinite = function (object) {
-  if (Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)) {
-    return true;
-  } else if (Object.prototype.toString.call(object) === "[object Null]" || object === "") {
-    return false;
-  } else if (Object.prototype.toString.call(object) === "[object String]") {
-    object = Number(object);
-    if (Object.prototype.toString.call(object) === "[object Number]" && object != Infinity && object != -Infinity && !isNaN(object)) {
-      return true;
-    }
-    return false;
-  } else {
+  if (_.isNull(object) || object === "") {
     return false;
   }
+
+  try {
+    object = Number(object);
+  } catch (error) {
+    return false;
+  } finally {
+
+  }
+
+  return _.isNumber(object) && object !== Infinity && object !== -Infinity && !isNaN(object);
 }
 
 _.isEqual = function (object, other) {
   var testIsNaN = function (a, b) {
     //Number
-    if (typeof a == "number" && typeof b == "number" && isNaN(a) && isNaN(b)) {
+    if (typeof a === "number" && typeof b === "number" && isNaN(a) && isNaN(b)) {
       return true;
     }
     return false;
   }
   //Array
   if (object instanceof Array && other instanceof Array) {
-    if (object.length == other.length) {
+    if (object.length === other.length) {
       var same = true;
       for (var i = 0; i < object.length; i++) {
         if (!_.isEqual(object[i], other[i])) {
@@ -247,6 +252,7 @@ _.isEqual = function (object, other) {
     return false;
   }
 }
+
 _.findIndex = function (array, predicate, context) {
   var found = -1;
   if (_.isNull(array)) {
@@ -292,7 +298,7 @@ _.isElement = function (object) {
 }
 
 _.each = function (list, iteratee, context) {
-  if (typeof iteratee == "function") {
+  if (typeof iteratee === "function") {
     if (Object.prototype.toString.call(list) === "[object Object]") {
       for (const prop in list) {
         if (list.hasOwnProperty(prop)) {
@@ -313,7 +319,7 @@ _.each = function (list, iteratee, context) {
 _.forEach = _.each;
 
 _.contains = function (list, value, fromIndex) {
-  if (Object.prototype.toString.call(list) === "[object Array]") {
+  if (_.isArray(list)) {
     return list.indexOf(value, fromIndex) !== -1;
   } else {
     return list.indexOf(value) !== -1;
@@ -370,9 +376,9 @@ _.map = function (list, iteratee, context) {
         output.push(iteratee.call(context, list[prop], prop, list));
       }
     }
-  } else if (Object.prototype.toString.call(list) === "[object String]" || Object.prototype.toString.call(list) === "[object Array]")
+  } else if (_.isString(list) || _.isArray(list))
     for (var i = 0; i < list.length; i++) {
-      if (Object.prototype.toString.call(iteratee) === "[object Function]" && iteratee.call(context, list[i]) !== undefined) {
+      if (_.isFunction(iteratee) && iteratee.call(context, list[i]) !== undefined) {
         output.push(iteratee.call(context, list[i]));
       } else {
         output.push(list[i][iteratee]);
@@ -384,7 +390,7 @@ _.map = function (list, iteratee, context) {
 _.collect = _.map;
 
 _.initial = function (array, n) {
-  var args = Array.prototype.slice.call(arguments);
+  var args = _.toArray(arguments);
   if (args.length == 1) {
     n = 1;
   }
@@ -441,7 +447,6 @@ _.intersection = function (arrays) {
       return output;
     }
     args[i] = _.toArray(args[i]);
-
   }
   var lastInterSec = args[0]
   for (var i = 0; i < args.length - 1; i++) {
@@ -579,6 +584,7 @@ _.lastIndexOf = function (array, value, fromIndex) {
 
   return pos;
 }
+
 _.indexOf = function (array, value, isSorted) {
   if (_.isNull(array) || _.isBoolean(array) || _.isUndefined(array)) {
     return -1;
@@ -1129,7 +1135,7 @@ _.zip = function (arrays) {
   if (_.isNull(arrays) || _.isUndefined(arrays) || _.isEmpty(arrays)) {
     return output;
   }
-  var arr = Array.prototype.slice.call(arguments);
+  var arr = _.toArray(arguments);
   var maxLength = 0;
   for (var i = 0; i < arr.length; i++) {
     if (arr[i].length > maxLength) {
@@ -1406,17 +1412,11 @@ _.has = function (object, key) {
 }
 
 _.isSymbol = function (object) {
-  if (typeof object !== "object") {
-    return typeof object === "symbol";
-  }
-  return object.constructor === Symbol;
+  return Object.prototype.toString.call(object) === "[object Symbol]";
 }
 
 _.isMap = function (object) {
-  if (typeof object !== "object") {
-    return Object.prototype.toString.call(object) === "[object map]";
-  }
-  return object.constructor === Map;
+  return Object.prototype.toString.call(object) === "[object Map]";
 }
 
 _.property = function (path) {
@@ -1462,17 +1462,11 @@ _.propertyOf = function (object) {
 }
 
 _.isWeakMap = function (object) {
-  if (typeof object !== "object") {
-    return Object.prototype.toString.call(object) === "[object map]";
-  }
-  return object.constructor === WeakMap;
+  return Object.prototype.toString.call(object) === "[object WeakMap]";
 }
 
 _.isSet = function (object) {
-  if (typeof object !== "object") {
-    return Object.prototype.toString.call(object) === "[object set]";
-  }
-  return object.constructor === Set;
+  return Object.prototype.toString.call(object) === "[object Set]";
 }
 
 _.noop = function () {
@@ -1682,27 +1676,41 @@ _.debounce = function (func, wait, immediate) {
     var setId = window.setTimeout(func, wait);
     var newFunc = function () {
       newFunc.cancel = function () {
-        return window.clearTimeout(setId);
+        window.clearTimeout(setId);
       };
       newFunc.cancel();
-      setId = window.setTimeout(func, wait);
+      var args = arguments;
+      setId = window.setTimeout(function () {
+        func.apply(this, args);
+      }.bind(this), wait);
     }
     return newFunc;
   } else {
     var stillWaiting = false;
-    var setid;
+    var setId;
+    var cachedFirstTimeResult;
     var newFunc = function () {
-      if (!stillWaiting) {
-        func.apply(arguments);
-        stillWaiting = true;
-        setid = window.setTimeout(function(){ stillWaiting = false;}, wait);
-      } else {
-        newFunc.cancel = function () {
-          return window.clearTimeout(setid);
+      newFunc.cancel = function () {
+        if (setId) {
+          stillWaiting = false;
+          cachedFirstTimeResult = undefined;
+          window.clearTimeout(setId);
         }
-        newFunc.cancel();
-        setid = window.setTimeout(function(){ stillWaiting = false;}, wait);
+      };
+      if (!stillWaiting) {
+        stillWaiting = true;
+        setId = window.setTimeout(function () {
+          stillWaiting = false;
+        }, wait);
+        cachedFirstTimeResult = func.apply(this, arguments);
+      } else {
+        window.clearTimeout(setId);
+        setId = window.setTimeout(function () {
+          stillWaiting = false;
+        }, wait);
       }
+
+      return cachedFirstTimeResult;
     }
     return newFunc;
   }
